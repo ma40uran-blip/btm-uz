@@ -1659,6 +1659,31 @@ button.lg:hover{border-color:var(--rule);color:var(--ink);background:var(--sunk)
 .bpane { overflow-wrap: anywhere; }
 .blev pre { white-space: pre-wrap; overflow-x: auto; }
 
+/* B daraja ro'yxati */
+.blist { display: grid; gap: 6px; margin-bottom: 12px; }
+.brow { display: flex; align-items: center; gap: 11px; width: 100%; padding: 11px 12px;
+  border-radius: 11px; border: 1px solid var(--rule); background: var(--surface);
+  color: var(--ink); cursor: pointer; text-align: left; }
+.brow .bnum { flex: 0 0 30px; height: 30px; border-radius: 8px; display: grid; place-items: center;
+  font-weight: 800; font-size: .82rem; background: var(--sunk); border: 1px solid var(--rule); }
+.brow .brt { flex: 1 1 auto; min-width: 0; }
+.brow .brt b { display: block; font-size: .9rem; }
+.brow .brt small { color: var(--ink-2); font-size: .76rem; }
+.brow .brs { flex: 0 0 18px; color: var(--ink-2); }
+.brow .brs svg { width: 17px; height: 17px; }
+.brow.open { border-color: color-mix(in oklab, var(--accent) 45%, transparent); }
+.brow.open .bnum { background: color-mix(in oklab, var(--accent) 20%, var(--sunk));
+  border-color: color-mix(in oklab, var(--accent) 50%, transparent); }
+.brow.open .brs { color: var(--accent); }
+.brow.done { border-color: var(--ok); background: color-mix(in oklab, var(--ok) 8%, var(--surface)); }
+.brow.done .bnum { background: var(--ok); color: #04140b; border-color: var(--ok); }
+.brow.done .brs { color: var(--ok); }
+.brow:disabled { opacity: .5; cursor: not-allowed; }
+.bbadge.rd { background: color-mix(in oklab, var(--accent) 18%, transparent); color: var(--accent);
+  border-color: color-mix(in oklab, var(--accent) 45%, transparent); }
+
+.brow .bnum { position: static; }
+
 </style>
 </head>
 <body>
@@ -2389,6 +2414,7 @@ function essayOpen(id) {
     `<button class="btn" id="esgo" onclick="essayCheck(${id})">${ico('check')} Tekshirish va baholash</button>
      <button class="btn o" onclick="essaySave(${id});toast('Qoralama saqlandi')">Qoralamani saqlash</button>
      <button class="btn o" onclick="defendCard(${id})">${ico('bolt')} Og'zaki (tez)</button>
+     ${typeof bBtn === 'function' ? bBtn(id) : ''}
      <button class="btn o" onclick="close_()">Yopish</button>`);
 
   const box = document.getElementById('esbox');
@@ -2927,6 +2953,64 @@ function bBtn(id) {
 }
 function bBadge() { return '<span class="bbadge">' + ico('shield') + 'B</span>'; }
 
+/* ==================== B DARAJA RO'YXATI (menyudan) ==================== */
+function bList() {
+  const ids = Object.keys(BD.t).map(Number).sort((a, b) => a - b);
+  const rows = ids.map(id => {
+    const t = T[id], cap = held(id), fin = bDone(id);
+    const state = fin ? 'done' : cap ? 'open' : 'lock';
+    const meta = fin ? 'mustahkamlangan · ' + bScore(id) + '/20'
+      : cap ? 'tayyor — bajarish mumkin'
+      : 'avval hududni egallang (test)';
+    return `<button class="brow ${state}" ${cap ? `onclick="close_();bOpen(${id})"` : 'disabled'}>
+      <span class="bnum">${id}</span>
+      <span class="brt"><b>${esc(t.name)}</b><small>${meta}</small></span>
+      <span class="brs">${ico(fin ? 'shield' : cap ? 'right' : 'lock')}</span></button>`;
+  }).join('');
+
+  const done = ids.filter(bDone).length, cap = ids.filter(held).length;
+  const pts = ids.reduce((s, i) => s + bScore(i), 0);
+
+  open_(ico('shield') + ' B daraja — mustahkamlash', `
+    <div class="neo blev">
+      <div class="bpane">
+        <div class="mstat">
+          <div><b>${done}</b><small>mustahkam</small></div>
+          <div><b>${cap - done}</b><small>tayyor</small></div>
+          <div><b>${ids.length - cap}</b><small>yopiq</small></div>
+          <div><b>${pts}</b><small>ball</small></div>
+        </div>
+
+        <div class="bnote">${ico('signal')} Hudud <b>test</b> bilan egallanadi,
+          <b>B vazifa</b> bilan mustahkamlanadi. Mustahkamlangan hudud
+          <b>zaiflashmaydi</b> va takrorlash so'ramaydi.
+          Vazifa dosye ustida bajariladi — javob kaliti siz yozgandan keyin ochiladi.</div>
+
+        <div class="msec">04 · Biznes jarayon va standartlar</div>
+        <div class="blist">${rows}</div>
+
+        <div class="bnote">${ico('map')} Qolgan modullar bosqichma-bosqich qo'shiladi.</div>
+      </div>
+    </div>`,
+    `<button class="btn" onclick="menu()">${ico('left')} Menyu</button>
+     <button class="btn neon" onclick="close_()">Yopish</button>`);
+}
+
+/* --- menyu va ro'yxat yordamchilari --- */
+function bReady(id) { return bHas(id) && held(id) && !bDone(id); }
+function bHint() {
+  return '<span class="bbadge rd">' + ico('shield') + 'B</span>';
+}
+function bMenuSub() {
+  const ids = Object.keys(BD.t).map(Number);
+  const done = ids.filter(bDone).length;
+  const rdy = ids.filter(bReady).length;
+  if (done === ids.length) return 'hammasi mustahkam';
+  if (rdy) return rdy + ' ta vazifa tayyor';
+  if (done) return done + '/' + ids.length + ' mustahkam';
+  return 'avval 22-28 hududni oling';
+}
+
 
 /* ============ SAYT HAQIDA ============ */
 function about() {
@@ -3063,7 +3147,7 @@ function cell(id, nx) {
     : dueIn(id) <= 0 ? 'takrorlash →' : 'himoya →';
   return `<button class="${cls}" onclick="pick(${id})">
     <span class="node">${id}</span>
-    <span><span class="rname">${t.name}${fortified ? bBadge() : ""}</span><span class="rmeta">${meta}</span></span>
+    <span><span class="rname">${t.name}${fortified ? bBadge() : bReady(id) ? bHint() : ""}</span><span class="rmeta">${meta}</span></span>
     <span class="rright">${hp}<span class="rgo">${go}</span></span></button>`;
 }
 function tog(m) { const g = document.getElementById('g' + m); if (g) g.style.display = g.style.display === 'none' ? '' : 'none'; }
@@ -4215,6 +4299,7 @@ function menu() {
       ${tile('blackbox()', 'eye', 'Qora quti', 'xato savollar aralashmasi', '#a855f7')}
       ${tile('chainGame()', 'link', 'Zanjir', "bog'lanishlarni tiklash", '#818cf8')}
       ${tile('essayList()', 'pen', 'Amaliyot daftari', esN ? esN + ' esse' : "hali bo'sh", '#4ade80')}
+      ${tile('bList()', 'shield', 'B daraja', bMenuSub(), '#c084fc')}
     </div>
 
     <div class="msec">Ma'lumot</div>
