@@ -1684,6 +1684,13 @@ button.lg:hover{border-color:var(--rule);color:var(--ink);background:var(--sunk)
 
 .brow .bnum { position: static; }
 
+/* qurilma sanasi */
+.bver { margin-top: 14px; padding-top: 11px; border-top: 1px solid var(--rule);
+  font-size: .72rem; color: var(--ink-2); display: flex; gap: 8px; flex-wrap: wrap;
+  align-items: baseline; }
+.bver b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.bver span { margin-left: auto; opacity: .75; }
+
 </style>
 </head>
 <body>
@@ -4319,7 +4326,9 @@ function menu() {
     </div>
 
     ${S.tro.length ? `<div class="msec">Trofeylar</div>
-      <div class="trow">${S.tro.map(k => troChip(k)).join('')}</div>` : ''}`,
+      <div class="trow">${S.tro.map(k => troChip(k)).join('')}</div>` : ''}
+
+    <div class="bver">Qurilgan: <b>2026-08-18 01:34</b><span>Eski ko'rinsa — Ctrl+Shift+R bosing</span></div>`,
     `<button class="btn o" onclick="close_()">Yopish</button>`);
 }
 function exportSave() { dl('77hudud-' + today() + '.json', JSON.stringify(S)); }
