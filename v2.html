@@ -1763,6 +1763,17 @@ function fresh() {
   return { v: 1, t: {}, flags: [], pts: 0, stk: 0, last: '', ses: 0,
            tro: [], caps: 0, crits: 0, chains: 0, sieges: 0, evt: null, evtDay: '' };
 }
+/* ==== SINOV REJIMI ====
+   1 = barcha hudud ochiq, B vazifa hudud egallanishini talab qilmaydi.
+   Odatdagi tartibga qaytarish uchun 0 qo'ying. */
+const OPENALL = 1;
+function openAll() {
+  if (!OPENALL) return;
+  let n = 0;
+  D.topics.forEach(t => { if (st(t.id).s === "fog") { S.t[t.id] = { s: "open" }; n++; } });
+  if (n) save();
+}
+
 let LSOK = true, MEM = null;
 function load() {
   let raw = null;
@@ -1772,6 +1783,7 @@ function load() {
   if (!S.t || !Object.keys(S.t).length) { S = fresh(); S.t[1] = { s: 'open' }; }
   migrate();
   decay();
+  openAll();
 }
 /* Eski saqlash -> takrorlash jadvali.
    Yangilanish hech kimni jazolamasligi kerak: mavjud sog'liq saqlanadi,
@@ -2968,13 +2980,18 @@ function bBtn(id) {
   return '<button class="btn ' + (d ? '' : 'neon') + '" onclick="close_();bOpen(' + id + ')">' +
     ico('shield') + ' ' + (d ? 'B vazifa · ' + bScore(id) + '/20' : 'Mustahkamlash') + '</button>';
 }
+/* sinov rejimida hudud egallanmagan bo'lsa ham vazifa ochiq */
+function bCap(id) {
+  if (typeof OPENALL !== "undefined" && OPENALL) return true;
+  return held(id);
+}
 function bBadge() { return '<span class="bbadge">' + ico('shield') + 'B</span>'; }
 
 /* ==================== B DARAJA RO'YXATI (menyudan) ==================== */
 function bList() {
   const ids = Object.keys(BD.t).map(Number).sort((a, b) => a - b);
   const row = id => {
-    const t = T[id], cap = held(id), fin = bDone(id);
+    const t = T[id], cap = bCap(id), fin = bDone(id);
     const state = fin ? 'done' : cap ? 'open' : 'lock';
     const meta = fin ? 'mustahkamlangan · ' + bScore(id) + '/20'
       : cap ? 'tayyor — bajarish mumkin'
@@ -2993,7 +3010,7 @@ function bList() {
       <div class="blist">${g.ids.map(row).join('')}</div>`;
   }).join('');
 
-  const done = ids.filter(bDone).length, cap = ids.filter(held).length;
+  const done = ids.filter(bDone).length, cap = ids.filter(bCap).length;
   const pts = ids.reduce((s, i) => s + bScore(i), 0);
 
   open_(ico('shield') + ' B daraja — mustahkamlash', `
@@ -3020,7 +3037,7 @@ function bList() {
 }
 
 /* --- menyu va ro'yxat yordamchilari --- */
-function bReady(id) { return bHas(id) && held(id) && !bDone(id); }
+function bReady(id) { return bHas(id) && bCap(id) && !bDone(id); }
 function bHint() {
   return '<span class="bbadge rd">' + ico('shield') + 'B</span>';
 }
@@ -3031,7 +3048,7 @@ function bMenuSub() {
   if (done === ids.length) return 'hammasi mustahkam';
   if (rdy) return rdy + ' ta vazifa tayyor';
   if (done) return done + '/' + ids.length + ' mustahkam';
-  return 'avval 22-28 hududni oling';
+  return ids.length + ' ta vazifa';
 }
 
 
@@ -3291,6 +3308,7 @@ function attackIntro(id) {
       <b>${b.best}/25</b> — ${b.n} urinish</div>` : ''}
    </div>`,
     `<button class="btn neon" onclick="startAttack(${id})">${ico(lash ? 'bolt' : 'sword')} Hujum boshlash</button>
+     ${typeof bBtn === 'function' ? bBtn(id) : ''}
      ${sc ? `<button class="btn o" onclick="note(${id},'attack:${id}')">${ico('book')} Qayta ko'rish</button>`
           : `<button class="btn o" onclick="scout(${id})">${ico('radar')} Razvedka</button>`}
      <button class="btn o" onclick="close_()">Keyinroq</button>`);
@@ -4344,7 +4362,7 @@ function menu() {
     ${S.tro.length ? `<div class="msec">Trofeylar</div>
       <div class="trow">${S.tro.map(k => troChip(k)).join('')}</div>` : ''}
 
-    <div class="bver">Qurilgan: <b>2026-08-18 05:35</b><span>Eski ko'rinsa — Ctrl+Shift+R bosing</span></div>`,
+    <div class="bver">Qurilgan: <b>2026-08-18 06:20</b><span>Eski ko'rinsa — Ctrl+Shift+R bosing</span></div>`,
     `<button class="btn o" onclick="close_()">Yopish</button>`);
 }
 function exportSave() { dl('77hudud-' + today() + '.json', JSON.stringify(S)); }
