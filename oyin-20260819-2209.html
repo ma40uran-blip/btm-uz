@@ -1724,6 +1724,17 @@ button.lg:hover{border-color:var(--rule);color:var(--ink);background:var(--sunk)
 .itsel:focus,.itin:focus{outline:2px solid var(--accent);outline-offset:-1px}
 .itin.num{max-width:120px}
 
+/* matn ichidagi bo'shliq — «Tanlangan ish: ____» */
+.itin.blank{display:inline-block;width:auto;min-width:84px;max-width:100%;
+  padding:2px 7px;margin:0 2px;border-radius:5px;
+  border:0;border-bottom:1px dashed var(--ink-3,var(--ink-2));
+  background:color-mix(in srgb,var(--accent) 7%,transparent);
+  font-size:inherit;line-height:inherit;vertical-align:baseline}
+.itin.blank::placeholder{color:var(--ink-3,var(--ink-2));opacity:.55;font-style:italic}
+.itin.blank:focus{outline:none;border-bottom-color:var(--accent);
+  background:color-mix(in srgb,var(--accent) 14%,transparent)}
+li .itin.blank,p .itin.blank{min-width:120px}
+
 /* --- izoh --- */
 .itfb{display:block;margin-top:6px;font-size:var(--t-xs);line-height:var(--lh-snug)}
 .itfb:empty{display:none}
@@ -1745,6 +1756,44 @@ button.lg:hover{border-color:var(--rule);color:var(--ink);background:var(--sunk)
 .ittab td.itok{background:color-mix(in srgb,var(--ok) 12%,transparent)}
 .ittab td.itbad{background:color-mix(in srgb,var(--danger) 12%,transparent)}
 .ittab td .itsel{min-width:130px}
+
+/* ==== TOR EKRAN: jadval kartochkaga aylanadi ====
+   4-5 ustunli jadval telefonda gorizontal siljiydi va oxirgi ustun
+   ko'rinmay qoladi. Kartochkada esa har katak o'z yorlig'i bilan turadi. */
+@media (max-width:560px){
+  .itb .ittw{overflow:visible}
+  .itb .ittab{min-width:0;display:block}
+  .itb .ittab thead{display:none}
+  .itb .ittab tbody,.itb .ittab tr{display:block}
+  .itb .ittab tr{border:1px solid var(--rule);border-radius:9px;
+    padding:8px 10px;margin-bottom:var(--s3);background:var(--paper)}
+  .itb .ittab td{display:block;border:0;padding:5px 0}
+  .itb .ittab td[data-h]:not(.itlbl)::before{
+    content:attr(data-h);display:block;margin-bottom:3px;
+    font-family:var(--mono);font-size:9px;letter-spacing:var(--track);
+    text-transform:uppercase;color:var(--ink-2)}
+  .itb .ittab td[data-h=""]::before{display:none}
+  .itb .ittab td.itlbl{font-weight:650;font-size:var(--t-md);
+    padding-bottom:7px;margin-bottom:4px;border-bottom:1px solid var(--rule)}
+  .itb .ittab td .itsel,.itb .ittab td .itin{min-width:0;width:100%;max-width:none}
+  .itb .ittab td.itok,.itb .ittab td.itbad{border-radius:6px;padding:5px 7px}
+}
+
+/* Jarayon chizig'i — uzun mashqda «qancha qoldi» */
+.itprog{position:relative;margin:0 0 var(--s4);padding:9px 12px;
+  border:1px solid var(--rule);border-radius:8px;background:var(--sunk);
+  font-size:var(--t-xs);color:var(--ink-2);overflow:hidden}
+.itprog i{position:absolute;left:0;top:0;bottom:0;width:0;
+  background:color-mix(in srgb,var(--accent) 16%,transparent);
+  transition:width .35s cubic-bezier(.2,.8,.2,1)}
+.itprog b{position:relative;color:var(--ink);margin-right:5px}
+
+/* Ball qulfi va «Nega?» tugmasi */
+.itlock{display:block;margin-top:6px;font-size:var(--t-xs);color:var(--ink-2)}
+.itlock svg{display:inline-block;width:11px;height:11px;vertical-align:-1px;margin-right:4px}
+.itwhy{display:block;margin-top:8px;font-size:var(--t-xs)}
+.itb.hidewhy .why{display:none}
+.itb.hidewhy .itwr p{opacity:.85}
 
 /* Xato izohlari jadvaldan tashqarida — siljish bilan kesilmaydi */
 .itwrong{display:none}
@@ -2793,6 +2842,7 @@ function bTask() {
       ${bHead('Dosyega qarab bajaring — javob kaliti hali yopiq')}
       ${bRail()}
       <div class="bpane">
+        ${hasT.some(Boolean) ? '<div class="itprog" id="itprog"></div>' : ''}
         ${d.m.map((m, i) => `
           <div class="bmq">
             <div class="bmh"><span class="bmn">${i + 1}</span><h3>${inlB(m.t)}</h3></div>
@@ -2813,6 +2863,7 @@ function bTask() {
     `<button class="btn" onclick="bStep(${bHasDos(BL.id) ? 1 : 0})">${ico('left')} ${bHasDos(BL.id) ? 'Dosye' : 'Kirish'}</button>
      <button class="btn neon" id="bnext" ${bFilled(BL.id) ? '' : 'disabled'}
        onclick="bStep(3)">${ico('right')} O'zingizni baholang</button>`);
+  itProg();   /* jarayon chizig'ini to'ldirish */
 }
 
 function bTyped(i) {
@@ -3190,6 +3241,13 @@ function itParse(tbl) {
   return { heads, rows };
 }
 
+/* Katakning haqiqiy matni. «…», «—», «-» — bular to'ldirish belgisi,
+   mazmun emas: shunday katak BO'SH deb qaraladi. */
+function itPlain(s) {
+  const t = String(s).replace(/<[^>]+>/g, '').trim();
+  return /^[…\.\-—–_\s]*$/.test(t) ? '' : t;
+}
+
 /* --- raqamni solishtirish --- */
 function itNum(s) {
   /* «4 375 000» kabi probel bilan ajratilgan minglikni yaxlit son deb o'qiymiz */
@@ -3220,6 +3278,37 @@ function itSet(p, t, r, c, v) {
   save();
   const btn = document.getElementById('itb-' + p + '-' + t);
   if (btn) btn.disabled = !itFilled(BL.id, p, t);
+  itProg();
+}
+
+/* ==== JARAYON: nechta katak to'ldirildi ====
+   Uzun mashqda «qancha qoldi» degan savolga javob beradi. */
+function itCount(id) {
+  const b = itSt(id);
+  let done = 0, all = 0;
+  Object.keys(b.tb).forEach(k => { if (String(b.tb[k]).trim()) done++; });
+  all = itSlots(id);
+  return { done: Math.min(done, all), all: all };
+}
+let ITSLOTS = {};
+function itSlots(id) {
+  if (ITSLOTS[id] != null) return ITSLOTS[id];
+  let n = 0;
+  const d = BD.t[id];
+  (d.m || []).forEach((part, pi) => {
+    const html = itApply(id, pi + 1, part.h);
+    n += (html.match(/<input |<select /g) || []).length;
+  });
+  ITSLOTS[id] = n;
+  return n;
+}
+function itProg() {
+  const el = document.getElementById('itprog');
+  if (!el) return;
+  const c = itCount(BL.id);
+  const pc = c.all ? Math.round(c.done / c.all * 100) : 0;
+  el.innerHTML = '<i style="width:' + pc + '%"></i>' +
+    '<b>' + c.done + ' / ' + c.all + '</b> katak to\'ldirildi';
 }
 function itFilled(id, p, t) {
   const sp = itSpecs(id, p).find(s => s.t === t);
@@ -3295,13 +3384,23 @@ function itDrawFill(id, p, t, sp, parsed, tbl) {
 
   const body = rows.map((label, r) => {
     const tds = heads.map((h, c) => {
-      if (c === 0) return `<td class="itlbl">${inlB(String(label))}</td>`;
+      /* har katak ustun nomini olib yuradi — tor ekranda yorliq bo'ladi */
+      const cell = (function () {
+      if (c === 0) {
+        /* nomi bo'sh bo'lsa — u ham to'ldiriladigan katak, matn emas */
+        if (!String(label || '').trim()) {
+          return '<td><input class="itin free" placeholder="…" value="' +
+            escA(itVal(id, p, t, r, 0)) +
+            '" oninput="itSet(' + p + ',' + t + ',' + r + ',0,this.value)"></td>';
+        }
+        return `<td class="itlbl">${inlB(String(label))}</td>`;
+      }
       const q = ask[r + ',' + c];
       /* spetsifikatsiya bergan matn (masalan tayyor muammolar ro'yxati) */
       const fixed = (sp.pre || {})[r + ',' + c];
       if (fixed) return '<td class="itpre">' + inlB(fixed) + '</td>';
       /* manbada allaqachon yozilgan katak — matn bo'lib qoladi, input bosib ketmasin */
-      const orig = ((parsed.rows[r] || [])[c] || '').replace(/<[^>]+>/g, '').trim();
+      const orig = itPlain(((parsed.rows[r] || [])[c] || ''));
       if (!q && orig && !/^ha\s+yo/i.test(orig)) return '<td class="itpre">' + inlB(orig) + '</td>';
       if (!q) return '<td><input class="itin free" placeholder="…" value="' +
         escA(itVal(id, p, t, r, c)) + '" oninput="itSet(' + p + ',' + t + ',' + r + ',' + c + ',this.value)"></td>';
@@ -3314,6 +3413,8 @@ function itDrawFill(id, p, t, sp, parsed, tbl) {
         `<option value="${j}"${String(v) === String(j) ? ' selected' : ''}>${esc(o)}</option>`).join('');
       return `<td><select class="itsel" onchange="itSet(${p},${t},${r},${c},this.value)">
         <option value="">— tanlang —</option>${sel}</select></td>`;
+      })();
+      return cell.replace('<td', '<td data-h="' + escA(h) + '"');
     }).join('');
     return `<tr id="itr-${p}-${t}-${r}">${tds}</tr>`;
   }).join('');
@@ -3332,7 +3433,7 @@ function itDrawFill(id, p, t, sp, parsed, tbl) {
    BITTA bo'sh katak ham yetarli — u to'ldirilishi uchun qo'yilgan.
    Faqat butunlay to'la jadval (ma'lumot jadvali) o'zgarishsiz qoladi. */
 function itFillable(parsed) {
-  const empty = parsed.rows.reduce((s, r) => s + r.filter(c => !c).length, 0);
+  const empty = parsed.rows.reduce((s, r) => s + r.filter(c => !itPlain(c)).length, 0);
   return parsed.rows.length > 0 && empty >= 1;
 }
 
@@ -3341,12 +3442,15 @@ function itFillable(parsed) {
    Spetsifikatsiyasi yo'q, lekin to'ldiriladigan jadval — hech bo'lmasa
    KATAKKA YOZILADIGAN bo'ladi. Hech bir jadval shunchaki rasm bo'lib qolmaydi. */
 function itApply(id, p, html) {
+  /* 1 — jadvaldan tashqaridagi «…» bo'shliqlari (jadvallarga tegmaydi) */
+  const withBlanks = itBlanks(id, p, html);
+  /* 2 — jadvallarning o'zi */
   const sp = itSpecs(id, p);
   let i = 0;
-  return html.replace(/<table[\s\S]*?<\/table>/g, tbl => {
+  return withBlanks.replace(/<table[\s\S]*?<\/table>/g, tbl => {
     const t = i++;
-    const s = sp.find(x => x.t === t);
-    if (s) return itDraw(id, p, tbl, t, s);
+    const s2 = sp.find(x => x.t === t);
+    if (s2) return itDraw(id, p, tbl, t, s2);
     const parsed = itParse(tbl);
     if (!itFillable(parsed)) return tbl;
     ITH[p + '|' + t] = parsed.heads;
@@ -3354,16 +3458,36 @@ function itApply(id, p, html) {
   });
 }
 
+/* Jadvaldan TASHQARIDAGI «…» bo'shliqlari ham yoziladigan bo'ladi.
+   «Tanlangan ish: …» kabi joylar mashqning bir qismi — ular pastdagi
+   umumiy matn maydoniga emas, o'z o'rniga yoziladi.
+   Kalit: p|800|n|0 — 800 «matn ichidagi bo'shliq» degani. */
+function itBlanks(id, p, html) {
+  let n = 0;
+  return html.split(/(<table[\s\S]*?<\/table>)/).map(seg => {
+    if (seg.slice(0, 6) === '<table') return seg;
+    return seg.split(/(<[^>]+>)/).map(bit => {
+      if (bit.charAt(0) === '<' || bit.indexOf('…') < 0) return bit;
+      return bit.replace(/…/g, function () {
+        const k = n++;
+        return '<input class="itin blank" size="12" placeholder="yozing" value="' +
+          escA(itVal(id, p, 800, k, 0)) +
+          '" oninput="itSet(' + p + ',800,' + k + ',0,this.value)">';
+      });
+    }).join('');
+  }).join('');
+}
+
 /* Tekshirilmaydigan, lekin to'ldiriladigan jadval */
 function itDrawOpen(id, p, t, parsed) {
   const heads = parsed.heads;
   const body = parsed.rows.map((row, r) => {
     const tds = heads.map((h, c) => {
-      const orig = (row[c] || '').replace(/<[^>]+>/g, '').trim();
+      const orig = itPlain(row[c] || '');
       if (orig && !/^ha\s+yo/i.test(orig)) {
-        return '<td class="' + (c === 0 ? 'itlbl' : 'itpre') + '">' + inlB(orig) + '</td>';
+        return '<td data-h="' + esc(h) + '" class="' + (c === 0 ? 'itlbl' : 'itpre') + '">' + inlB(row[c]) + '</td>';
       }
-      return '<td><input class="itin free" placeholder="…" value="' + escA(itVal(id, p, t, r, c)) +
+      return '<td data-h="' + esc(h) + '"><input class="itin free" placeholder="…" value="' + escA(itVal(id, p, t, r, c)) +
         '" oninput="itSet(' + p + ',' + t + ',' + r + ',' + c + ',this.value)"></td>';
     }).join('');
     return '<tr>' + tds + '</tr>';
@@ -3400,7 +3524,8 @@ function itCheck(p, t) {
       const fb = host.querySelector('.itfb');
       if (fb) {
         fb.innerHTML = good ? ico('check') + " to'g'ri"
-          : ico('x') + ' <b>' + esc(itLabel(sp, q, p, t)) + '</b> — ' + inlB(q.w || '');
+          : ico('x') + ' <b>' + esc(itLabel(sp, q, p, t)) + '</b>' +
+            '<span class="why"> — ' + inlB(q.w || '') + '</span>';
       }
       return;
     }
@@ -3416,7 +3541,8 @@ function itCheck(p, t) {
       const head = (ITH[p + '|' + t] || [])[q.c];
       (notes[q.r] = notes[q.r] || []).push(
         (head ? '<u>' + esc(head) + '</u> · ' : '') +
-        '<b>' + esc(itLabel(sp, q, p, t)) + '</b> — ' + inlB(q.w || ''));
+        '<b>' + esc(itLabel(sp, q, p, t)) + '</b>' +
+        '<span class="why"> — ' + inlB(q.w || '') + '</span>');
     }
   });
 
@@ -3435,7 +3561,15 @@ function itCheck(p, t) {
     }
   }
 
-  itSt(id).tbc[p + '|' + t] = { n: qs.length, ok: ok };
+  /* BALL BIRINCHI URINISHDAN OLINADI.
+     Javobni ko'rib, keyin to'g'rilab 100% olish mumkin bo'lmasligi kerak —
+     aks holda kalibrlash bali ma'nosini yo'qotadi. Qayta urinish ochiq
+     qoladi (o'rganish uchun), lekin hisobga olinmaydi. */
+  const st = itSt(id).tbc;
+  const key = p + '|' + t;
+  const first = st[key] && st[key].locked;
+  if (!first) st[key] = { n: qs.length, ok: ok, locked: 1 };
+  st[key].last = ok;
   save();
 
   const res = document.getElementById('itres-' + p + '-' + t);
@@ -3443,10 +3577,32 @@ function itCheck(p, t) {
     const pc = Math.round(ok / qs.length * 100);
     res.className = 'itres on ' + (pc >= 80 ? 'g' : pc >= 50 ? 'w' : 'b');
     res.innerHTML = '<b>' + ok + ' / ' + qs.length + " to'g'ri</b>" +
-      (wrong.length ? " · xatolar ustida izoh berildi" : ' · toza ish');
+      (wrong.length ? " · xatolar ustida izoh berildi" : ' · toza ish') +
+      (first
+        ? '<small class="itlock">' + ico('lock') + ' Ballga birinchi urinish yozilgan: ' +
+          st[key].ok + ' / ' + st[key].n + '</small>'
+        : '<small class="itlock">' + ico('lock') +
+          ' Shu natija ballga yozildi. Qayta urinish mumkin, lekin ball o\'zgarmaydi.</small>') +
+      (wrong.length
+        ? '<button class="lnk itwhy" onclick="itWhy(' + p + ',' + t + ')">' +
+          "Nega? — izohlarni ochish</button>"
+        : '');
   }
+  /* Avval faqat rang ko'rsatiladi — o'quvchi o'zi o'ylab ko'rsin */
+  const w = document.getElementById('itw-' + p + '-' + t);
+  if (w) w.classList.add('hidewhy');
   const btn = document.getElementById('itb-' + p + '-' + t);
   if (btn) btn.textContent = 'Qayta tekshirish';
+}
+
+/* «Nega?» — izohlarni ochadi yoki yopadi */
+function itWhy(p, t) {
+  const w = document.getElementById('itw-' + p + '-' + t);
+  if (!w) return;
+  const hid = w.classList.contains('hidewhy');
+  w.classList.toggle('hidewhy', !hid);
+  const b = w.querySelector('.itwhy');
+  if (b) b.textContent = hid ? 'Izohlarni yashirish' : 'Nega? — izohlarni ochish';
 }
 
 /* Qator nomi — jadvaldagi to'ldirilmagan (matnli) kataklardan yig'iladi */
@@ -4799,7 +4955,7 @@ function menu() {
     ${S.tro.length ? `<div class="msec">Trofeylar</div>
       <div class="trow">${S.tro.map(k => troChip(k)).join('')}</div>` : ''}
 
-    <div class="bver">Qurilgan: <b>2026-08-18 09:57</b><span>Eski ko'rinsa — Ctrl+Shift+R bosing</span></div>`,
+    <div class="bver">Qurilgan: <b>2026-08-19 22:09</b></div>`,
     `<button class="btn o" onclick="close_()">Yopish</button>`);
 }
 function exportSave() { dl('77hudud-' + today() + '.json', JSON.stringify(S)); }
