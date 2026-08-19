@@ -1695,6 +1695,65 @@ button.lg:hover{border-color:var(--rule);color:var(--ink);background:var(--sunk)
 .blev .msec em { margin-left: auto; font-style: normal; font-variant-numeric: tabular-nums;
   letter-spacing: 0; color: var(--ink); }
 
+/* ==================== MASHQ ALMASHTIRGICH ====================
+   Uchala mashq bir varaqda taxlanib ketmasin — bir vaqtda bittasi. */
+.bmtabs { display: flex; gap: 6px; padding: 9px 12px; overflow-x: auto;
+  scrollbar-width: none; border-bottom: 1px solid var(--rule);
+  background: linear-gradient(180deg,
+    color-mix(in oklab, var(--c) 7%, transparent), transparent); }
+.bmtabs::-webkit-scrollbar { display: none; }
+.bmtab { flex: 0 0 auto; display: flex; align-items: center; gap: 7px;
+  padding: 7px 12px 7px 8px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--rule); background: var(--surface); color: var(--ink-2);
+  font: inherit; font-size: .78rem; transition: .16s; }
+.bmtab b { width: 19px; height: 19px; border-radius: 50%; display: grid;
+  place-items: center; font-size: .68rem; background: var(--rule); color: var(--ink);
+  transition: .16s; }
+.bmtab:hover { color: var(--ink); border-color: color-mix(in oklab, var(--c) 40%, var(--rule)); }
+.bmtab.on { color: var(--ink); border-color: var(--c);
+  background: color-mix(in oklab, var(--c) 14%, var(--surface));
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--c) 35%, transparent),
+              0 0 22px -8px var(--c); }
+.bmtab.on b { background: var(--c); color: var(--accent-ink); }
+.bmtab.ok b { background: var(--ok); color: #04140b; }
+.bmtab.ok.on b { background: var(--ok); }
+
+.bmnext { width: 100%; margin-top: 4px; }
+
+/* ==================== NEON ====================
+   O'yinning mavjud tili: yumshoq halqa + tashqi yorug'lik.
+   Faqat DIQQAT TALAB QILADIGAN joyda — bezak uchun emas. */
+.blev .bhead { position: relative; }
+.blev .bhead::after { content: ""; position: absolute; left: 14px; right: 14px; bottom: 0;
+  height: 1px; background: linear-gradient(90deg,
+    transparent, color-mix(in oklab, var(--c) 65%, transparent), transparent); }
+.blev .nnum { box-shadow: 0 0 0 1px color-mix(in oklab, var(--c) 30%, transparent),
+  0 0 26px -10px var(--c); }
+.brail .bs.on { box-shadow: 0 0 20px -9px var(--c); }
+.bmn { box-shadow: 0 0 18px -8px var(--c); }
+
+/* relsda siljish borligi ko'rinib tursin */
+.brail, .bmtabs { position: relative;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 14px,
+    #000 calc(100% - 14px), transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 14px,
+    #000 calc(100% - 14px), transparent 100%); }
+
+/* ==================== TOR EKRAN ==================== */
+@media (max-width: 560px) {
+  .bpane { padding: 10px 11px 16px; }
+  .blev .bhead { padding: 12px 11px 10px; gap: 9px; }
+  .blev .bhead h2 { font-size: 1rem; }
+  .brail { padding: 7px 8px; gap: 3px; }
+  .brail .bs { padding: 5px 8px; font-size: .72rem; }
+  .brail .bs span { display: none; }        /* faqat raqam qoladi — sig'adi */
+  .brail .bs.on span { display: inline; }   /* joriy qadam nomi ko'rinadi */
+  .bmtabs { padding: 8px 10px; }
+  .bmtab span { max-width: 108px; overflow: hidden; text-overflow: ellipsis;
+    white-space: nowrap; }
+  .bmq { margin-bottom: 12px; }
+}
+
 /* ==== INTERAKTIV JADVAL ==== */
 /* to'ldiriladigan mashqda material qutisi qisqartirilmaydi —
    aks holda jadval kichkina oynachaga tiqiladi */
@@ -1756,6 +1815,44 @@ li .itin.blank,p .itin.blank{min-width:120px}
 .ittab td.itok{background:color-mix(in srgb,var(--ok) 12%,transparent)}
 .ittab td.itbad{background:color-mix(in srgb,var(--danger) 12%,transparent)}
 .ittab td .itsel{min-width:130px}
+
+/* ==== TOR EKRAN: jadval kartochkaga aylanadi ====
+   4-5 ustunli jadval telefonda gorizontal siljiydi va oxirgi ustun
+   ko'rinmay qoladi. Kartochkada esa har katak o'z yorlig'i bilan turadi. */
+@media (max-width:560px){
+  .itb .ittw{overflow:visible}
+  .itb .ittab{min-width:0;display:block}
+  .itb .ittab thead{display:none}
+  .itb .ittab tbody,.itb .ittab tr{display:block}
+  .itb .ittab tr{border:1px solid var(--rule);border-radius:9px;
+    padding:8px 10px;margin-bottom:var(--s3);background:var(--paper)}
+  .itb .ittab td{display:block;border:0;padding:5px 0}
+  .itb .ittab td[data-h]:not(.itlbl)::before{
+    content:attr(data-h);display:block;margin-bottom:3px;
+    font-family:var(--mono);font-size:9px;letter-spacing:var(--track);
+    text-transform:uppercase;color:var(--ink-2)}
+  .itb .ittab td[data-h=""]::before{display:none}
+  .itb .ittab td.itlbl{font-weight:650;font-size:var(--t-md);
+    padding-bottom:7px;margin-bottom:4px;border-bottom:1px solid var(--rule)}
+  .itb .ittab td .itsel,.itb .ittab td .itin{min-width:0;width:100%;max-width:none}
+  .itb .ittab td.itok,.itb .ittab td.itbad{border-radius:6px;padding:5px 7px}
+}
+
+/* Jarayon chizig'i — uzun mashqda «qancha qoldi» */
+.itprog{position:relative;margin:0 0 var(--s4);padding:9px 12px;
+  border:1px solid var(--rule);border-radius:8px;background:var(--sunk);
+  font-size:var(--t-xs);color:var(--ink-2);overflow:hidden}
+.itprog i{position:absolute;left:0;top:0;bottom:0;width:0;
+  background:color-mix(in srgb,var(--accent) 16%,transparent);
+  transition:width .35s cubic-bezier(.2,.8,.2,1)}
+.itprog b{position:relative;color:var(--ink);margin-right:5px}
+
+/* Ball qulfi va «Nega?» tugmasi */
+.itlock{display:block;margin-top:6px;font-size:var(--t-xs);color:var(--ink-2)}
+.itlock svg{display:inline-block;width:11px;height:11px;vertical-align:-1px;margin-right:4px}
+.itwhy{display:block;margin-top:8px;font-size:var(--t-xs)}
+.itb.hidewhy .why{display:none}
+.itb.hidewhy .itwr p{opacity:.85}
 
 /* Xato izohlari jadvaldan tashqarida — siljish bilan kesilmaydi */
 .itwrong{display:none}
@@ -2796,26 +2893,44 @@ function bDos() {
 /* ======================== 2 · VAZIFA ======================== */
 function bTask() {
   const d = BD.t[BL.id], b = bSt(BL.id);
-  /* jadvallarni oldindan interaktiv qilib olamiz — sarlavha shunga qarab o'zgaradi */
-  const IH = d.m.map((m, i) => itApply(BL.id, i + 1, m.h));
-  const hasT = IH.map(h => h.indexOf('class="itb') >= 0);
+  const n = d.m.length;
+  if (BL.mq == null || BL.mq >= n) BL.mq = 0;
+  const i = BL.mq;
+  const m = d.m[i];
+
+  const html = itApply(BL.id, i + 1, m.h);
+  const hasT = html.indexOf('class="itb') >= 0;
+
+  /* mashqlar orasida almashtirgich — har birida to'ldirilganlik belgisi */
+  const tabs = d.m.map((x, j) => {
+    const full = bChars(BL.id, j) >= BMIN;
+    return `<button class="bmtab${j === i ? ' on' : ''}${full ? ' ok' : ''}"
+      onclick="bMq(${j})"><b>${j + 1}</b><span>${esc(bShort(x.t))}</span></button>`;
+  }).join('');
+
   open_(ico('book') + ' Vazifa', `
     <div class="neo blev">
       ${bHead('Dosyega qarab bajaring — javob kaliti hali yopiq')}
       ${bRail()}
+      <div class="bmtabs">${tabs}</div>
       <div class="bpane">
-        ${d.m.map((m, i) => `
-          <div class="bmq">
-            <div class="bmh"><span class="bmn">${i + 1}</span><h3>${inlB(m.t)}</h3></div>
-            <div class="note bmt${hasT[i] ? ' free' : ''}">${IH[i]}</div>
-            <label class="bwl">${hasT[i] ? 'Xulosangiz' : 'Javobingiz'}
-              <span class="bcnt" id="bc${i}">${bChars(BL.id, i)}/${BMIN} belgi</span></label>
-            <textarea class="bta" id="bta${i}" oninput="bTyped(${i})"
-              placeholder="${hasT[i]
-                ? 'Jadvaldan chiqqan xulosangizni yozing…'
-                : "Xulosangizni shu yerga yozing…"}"
-            >${escA(b.a['m' + i] || '')}</textarea>
-          </div>`).join('')}
+        ${hasT ? '<div class="itprog" id="itprog"></div>' : ''}
+        <div class="bmq">
+          <div class="bmh"><span class="bmn">${i + 1}</span><h3>${inlB(m.t)}</h3></div>
+          <div class="note bmt${hasT ? ' free' : ''}">${html}</div>
+          <label class="bwl">${hasT ? 'Xulosangiz' : 'Javobingiz'}
+            <span class="bcnt" id="bc${i}">${bChars(BL.id, i)}/${BMIN} belgi</span></label>
+          <textarea class="bta" id="bta${i}" oninput="bTyped(${i})"
+            placeholder="${hasT
+              ? 'Jadvaldan chiqqan xulosangizni yozing…'
+              : "Xulosangizni shu yerga yozing…"}"
+          >${escA(b.a['m' + i] || '')}</textarea>
+        </div>
+
+        ${i < n - 1
+          ? `<button class="btn o bmnext" onclick="bMq(${i + 1})">
+              ${ico('right')} Keyingi mashq — ${esc(bShort(d.m[i + 1].t))}</button>`
+          : ''}
 
         ${bHasDos(BL.id) ? `<div class="bdos-mini">${ico('radar')}
           <button class="lnk" onclick="bStep(1)">Dosyeni qayta ochish</button></div>` : ''}
@@ -2824,6 +2939,21 @@ function bTask() {
     `<button class="btn" onclick="bStep(${bHasDos(BL.id) ? 1 : 0})">${ico('left')} ${bHasDos(BL.id) ? 'Dosye' : 'Kirish'}</button>
      <button class="btn neon" id="bnext" ${bFilled(BL.id) ? '' : 'disabled'}
        onclick="bStep(3)">${ico('right')} O'zingizni baholang</button>`);
+  itProg();
+}
+
+/* mashqni almashtirish */
+function bMq(j) {
+  BL.mq = j;
+  bTask();
+  const p = document.querySelector('.mb');
+  if (p) p.scrollTop = 0;
+}
+
+/* uzun sarlavhani yorliqqa siqish */
+function bShort(t) {
+  const s = String(t).replace(/\*/g, '').replace(/\s*\([^)]*\)\s*/g, ' ').trim();
+  return s.length > 22 ? s.slice(0, 21) + '…' : s;
 }
 
 function bTyped(i) {
@@ -3238,6 +3368,37 @@ function itSet(p, t, r, c, v) {
   save();
   const btn = document.getElementById('itb-' + p + '-' + t);
   if (btn) btn.disabled = !itFilled(BL.id, p, t);
+  itProg();
+}
+
+/* ==== JARAYON: nechta katak to'ldirildi ====
+   Uzun mashqda «qancha qoldi» degan savolga javob beradi. */
+function itCount(id) {
+  const b = itSt(id);
+  let done = 0, all = 0;
+  Object.keys(b.tb).forEach(k => { if (String(b.tb[k]).trim()) done++; });
+  all = itSlots(id);
+  return { done: Math.min(done, all), all: all };
+}
+let ITSLOTS = {};
+function itSlots(id) {
+  if (ITSLOTS[id] != null) return ITSLOTS[id];
+  let n = 0;
+  const d = BD.t[id];
+  (d.m || []).forEach((part, pi) => {
+    const html = itApply(id, pi + 1, part.h);
+    n += (html.match(/<input |<select /g) || []).length;
+  });
+  ITSLOTS[id] = n;
+  return n;
+}
+function itProg() {
+  const el = document.getElementById('itprog');
+  if (!el) return;
+  const c = itCount(BL.id);
+  const pc = c.all ? Math.round(c.done / c.all * 100) : 0;
+  el.innerHTML = '<i style="width:' + pc + '%"></i>' +
+    '<b>' + c.done + ' / ' + c.all + '</b> katak to\'ldirildi';
 }
 function itFilled(id, p, t) {
   const sp = itSpecs(id, p).find(s => s.t === t);
@@ -3313,6 +3474,8 @@ function itDrawFill(id, p, t, sp, parsed, tbl) {
 
   const body = rows.map((label, r) => {
     const tds = heads.map((h, c) => {
+      /* har katak ustun nomini olib yuradi — tor ekranda yorliq bo'ladi */
+      const cell = (function () {
       if (c === 0) {
         /* nomi bo'sh bo'lsa — u ham to'ldiriladigan katak, matn emas */
         if (!String(label || '').trim()) {
@@ -3340,6 +3503,8 @@ function itDrawFill(id, p, t, sp, parsed, tbl) {
         `<option value="${j}"${String(v) === String(j) ? ' selected' : ''}>${esc(o)}</option>`).join('');
       return `<td><select class="itsel" onchange="itSet(${p},${t},${r},${c},this.value)">
         <option value="">— tanlang —</option>${sel}</select></td>`;
+      })();
+      return cell.replace('<td', '<td data-h="' + escA(h) + '"');
     }).join('');
     return `<tr id="itr-${p}-${t}-${r}">${tds}</tr>`;
   }).join('');
@@ -3410,9 +3575,9 @@ function itDrawOpen(id, p, t, parsed) {
     const tds = heads.map((h, c) => {
       const orig = itPlain(row[c] || '');
       if (orig && !/^ha\s+yo/i.test(orig)) {
-        return '<td class="' + (c === 0 ? 'itlbl' : 'itpre') + '">' + inlB(row[c]) + '</td>';
+        return '<td data-h="' + esc(h) + '" class="' + (c === 0 ? 'itlbl' : 'itpre') + '">' + inlB(row[c]) + '</td>';
       }
-      return '<td><input class="itin free" placeholder="…" value="' + escA(itVal(id, p, t, r, c)) +
+      return '<td data-h="' + esc(h) + '"><input class="itin free" placeholder="…" value="' + escA(itVal(id, p, t, r, c)) +
         '" oninput="itSet(' + p + ',' + t + ',' + r + ',' + c + ',this.value)"></td>';
     }).join('');
     return '<tr>' + tds + '</tr>';
@@ -3449,14 +3614,15 @@ function itCheck(p, t) {
       const fb = host.querySelector('.itfb');
       if (fb) {
         fb.innerHTML = good ? ico('check') + " to'g'ri"
-          : ico('x') + ' <b>' + esc(itLabel(sp, q, p, t)) + '</b> — ' + inlB(q.w || '');
+          : ico('x') + ' <b>' + esc(itLabel(sp, q, p, t)) + '</b>' +
+            '<span class="why"> — ' + inlB(q.w || '') + '</span>';
       }
       return;
     }
 
     const row = document.getElementById('itr-' + p + '-' + t + '-' + q.r);
     if (!row) return;
-    const cell = row.children[q.c];
+    const cell = row.children && row.children[q.c];
     if (cell) {
       cell.classList.remove('itok', 'itbad');
       cell.classList.add(good ? 'itok' : 'itbad');
@@ -3465,7 +3631,8 @@ function itCheck(p, t) {
       const head = (ITH[p + '|' + t] || [])[q.c];
       (notes[q.r] = notes[q.r] || []).push(
         (head ? '<u>' + esc(head) + '</u> · ' : '') +
-        '<b>' + esc(itLabel(sp, q, p, t)) + '</b> — ' + inlB(q.w || ''));
+        '<b>' + esc(itLabel(sp, q, p, t)) + '</b>' +
+        '<span class="why"> — ' + inlB(q.w || '') + '</span>');
     }
   });
 
@@ -3484,7 +3651,15 @@ function itCheck(p, t) {
     }
   }
 
-  itSt(id).tbc[p + '|' + t] = { n: qs.length, ok: ok };
+  /* BALL BIRINCHI URINISHDAN OLINADI.
+     Javobni ko'rib, keyin to'g'rilab 100% olish mumkin bo'lmasligi kerak —
+     aks holda kalibrlash bali ma'nosini yo'qotadi. Qayta urinish ochiq
+     qoladi (o'rganish uchun), lekin hisobga olinmaydi. */
+  const st = itSt(id).tbc;
+  const key = p + '|' + t;
+  const first = st[key] && st[key].locked;
+  if (!first) st[key] = { n: qs.length, ok: ok, locked: 1 };
+  st[key].last = ok;
   save();
 
   const res = document.getElementById('itres-' + p + '-' + t);
@@ -3492,10 +3667,32 @@ function itCheck(p, t) {
     const pc = Math.round(ok / qs.length * 100);
     res.className = 'itres on ' + (pc >= 80 ? 'g' : pc >= 50 ? 'w' : 'b');
     res.innerHTML = '<b>' + ok + ' / ' + qs.length + " to'g'ri</b>" +
-      (wrong.length ? " · xatolar ustida izoh berildi" : ' · toza ish');
+      (wrong.length ? " · xatolar ustida izoh berildi" : ' · toza ish') +
+      (first
+        ? '<small class="itlock">' + ico('lock') + ' Ballga birinchi urinish yozilgan: ' +
+          st[key].ok + ' / ' + st[key].n + '</small>'
+        : '<small class="itlock">' + ico('lock') +
+          ' Shu natija ballga yozildi. Qayta urinish mumkin, lekin ball o\'zgarmaydi.</small>') +
+      (wrong.length
+        ? '<button class="lnk itwhy" onclick="itWhy(' + p + ',' + t + ')">' +
+          "Nega? — izohlarni ochish</button>"
+        : '');
   }
+  /* Avval faqat rang ko'rsatiladi — o'quvchi o'zi o'ylab ko'rsin */
+  const w = document.getElementById('itw-' + p + '-' + t);
+  if (w) w.classList.add('hidewhy');
   const btn = document.getElementById('itb-' + p + '-' + t);
   if (btn) btn.textContent = 'Qayta tekshirish';
+}
+
+/* «Nega?» — izohlarni ochadi yoki yopadi */
+function itWhy(p, t) {
+  const w = document.getElementById('itw-' + p + '-' + t);
+  if (!w) return;
+  const hid = w.classList.contains('hidewhy');
+  w.classList.toggle('hidewhy', !hid);
+  const b = w.querySelector('.itwhy');
+  if (b) b.textContent = hid ? 'Izohlarni yashirish' : 'Nega? — izohlarni ochish';
 }
 
 /* Qator nomi — jadvaldagi to'ldirilmagan (matnli) kataklardan yig'iladi */
@@ -4848,7 +5045,7 @@ function menu() {
     ${S.tro.length ? `<div class="msec">Trofeylar</div>
       <div class="trow">${S.tro.map(k => troChip(k)).join('')}</div>` : ''}
 
-    <div class="bver">Qurilgan: <b>2026-08-19 21:20</b><span>Eski ko'rinsa — Ctrl+Shift+R bosing</span></div>`,
+    <div class="bver">Qurilgan: <b>2026-08-19 22:56</b></div>`,
     `<button class="btn o" onclick="close_()">Yopish</button>`);
 }
 function exportSave() { dl('77hudud-' + today() + '.json', JSON.stringify(S)); }
