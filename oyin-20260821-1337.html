@@ -1974,6 +1974,9 @@ li .itin.blank,p .itin.blank{min-width:120px}
 .itres.b{border-color:var(--danger)}
 
 /* ==================== BILIM XARITASI ==================== */
+/* bo'shliq afsonadan keyin bo'lsin, xarita bilan afsona orasida emas */
+#mapwrap { margin-bottom: 0; }
+#maplgs { margin-bottom: 26px; }
 #mapwrap { position: relative; width: 100%; height: min(72vh, 620px);
   border: 1px solid var(--rule); border-radius: 14px; overflow: hidden;
   background:
@@ -1985,9 +1988,13 @@ li .itin.blank,p .itin.blank{min-width:120px}
 
 /* --- modul halosi --- */
 .ghalo { pointer-events: none; }
-.gmn { font-family: var(--mono); font-size: 12px; font-weight: 700; text-anchor: middle;
+/* text-anchor bu yerda BERILMAYDI: har bir yorliq o'z atributida
+   to'daning qaysi tomonida turishiga qarab start/middle/end oladi.
+   CSS xossasi atributdan ustun kelib, hammasini markazga tortar edi —
+   shunda uzun nomlar to'da ustidan o'tib ketardi. */
+.gmn { font-family: var(--mono); font-size: 12px; font-weight: 700;
   letter-spacing: .06em; text-transform: uppercase; opacity: .85; }
-.gmc { font-family: var(--mono); font-size: 10.5px; text-anchor: middle;
+.gmc { font-family: var(--mono); font-size: 10.5px;
   fill: var(--ink-2); opacity: .8; }
 
 /* --- bog'lanishlar --- */
@@ -2036,12 +2043,10 @@ li .itin.blank,p .itin.blank{min-width:120px}
   cursor: pointer; }
 .gzb:hover { border-color: var(--accent); color: var(--accent); }
 
-/* afsona pastda — graf ustini to'smaydi */
-.glgs { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3;
-  display: flex; gap: 4px 12px; padding: 9px 11px; overflow-x: auto;
-  scrollbar-width: none; pointer-events: auto; white-space: nowrap;
-  background: linear-gradient(0deg, color-mix(in oklab, var(--sunk) 94%, transparent), transparent); }
-.glgs::-webkit-scrollbar { display: none; }
+/* Afsona xaritaning OSTIDA, alohida qatorda.
+   Ilgari u graf ustida suzib turardi: bir qatorga siqilib o'ng chetda
+   so'z o'rtasidan kesilardi, telefonda esa pastki to'dalarni to'sardi. */
+.glgs { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 10px 2px 0; }
 .glg { flex: 0 0 auto; }
 .glg { display: inline-flex; align-items: center; gap: 5px;
   font-size: .7rem; color: var(--ink-2); }
@@ -2057,6 +2062,231 @@ li .itin.blank,p .itin.blank{min-width:120px}
   .glg { font-size: .66rem; }
   .gmn { font-size: 11px; }
 }
+
+/* ==================== BOSH EKRAN ==================== */
+.home { display: flex; flex-direction: column; gap: 20px; padding-bottom: 24px; }
+
+/* ---------- 1 · DAVOM ETING ---------- */
+.hero { position: relative; overflow: hidden; border-radius: 18px;
+  border: 1px solid color-mix(in oklab, var(--hc) 26%, var(--rule));
+  background: var(--surface);
+  box-shadow: 0 1px 0 rgba(255,255,255,.03) inset,
+              0 22px 50px -30px rgba(0,0,0,.85),
+              0 0 0 1px color-mix(in oklab, var(--hc) 10%, transparent); }
+
+.hero-glow { position: absolute; inset: -40% -10% auto -10%; height: 320px; pointer-events: none;
+  background: radial-gradient(60% 70% at 22% 0%,
+    color-mix(in oklab, var(--hc) 26%, transparent), transparent 72%); }
+
+.hero-in { position: relative; display: flex; gap: 18px; align-items: flex-start;
+  padding: 22px 24px 4px; }
+
+.hero-num { flex: none; width: 60px; height: 60px; border-radius: 16px;
+  display: grid; place-items: center;
+  font-family: var(--mono); font-size: 24px; font-weight: 800; letter-spacing: -.02em;
+  color: var(--hc);
+  background: color-mix(in oklab, var(--hc) 13%, transparent);
+  border: 1px solid color-mix(in oklab, var(--hc) 36%, transparent);
+  box-shadow: 0 0 34px -10px var(--hc); }
+
+.hero-tag { display: block; font-family: var(--mono); font-size: 10px; font-weight: 700;
+  letter-spacing: .15em; text-transform: uppercase;
+  color: var(--hc); margin-bottom: 7px; }
+.hero-txt h2 { margin: 0 0 6px; font-size: 1.62rem; line-height: 1.18;
+  letter-spacing: -.02em; font-weight: 700; }
+.hero-txt p { margin: 0; font-size: .92rem; line-height: 1.55; color: var(--ink-2); }
+
+.hero-act { position: relative; display: flex; flex-wrap: wrap; gap: 9px;
+  padding: 16px 24px 20px; }
+
+.hbtn { display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 18px; border-radius: 11px; cursor: pointer;
+  font: inherit; font-size: .92rem; font-weight: 600; border: 1px solid transparent;
+  transition: transform .14s cubic-bezier(.2,.8,.2,1), box-shadow .18s, background .18s; }
+.hbtn svg { width: 15px; height: 15px; }
+.hbtn.go { background: var(--hc); color: #04121c; font-weight: 700;
+  box-shadow: 0 0 34px -10px var(--hc); }
+.hbtn.go:hover { transform: translateY(-1px); box-shadow: 0 0 42px -6px var(--hc); }
+.hbtn.ghost { background: transparent; color: var(--ink-2); border-color: var(--rule); }
+.hbtn.ghost:hover { color: var(--ink); border-color: color-mix(in oklab, var(--hc) 45%, var(--rule)); }
+
+/* ---------- 2 · TARAQQIYOT ---------- */
+.hprog { display: flex; flex-direction: column; gap: 10px; }
+.hp-top { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.hp-n { display: flex; align-items: baseline; gap: 7px; }
+.hp-n b { font-size: 1.5rem; font-weight: 700; letter-spacing: -.02em; }
+.hp-n span { font-size: .85rem; color: var(--ink-2); }
+.hp-side { margin-left: auto; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.hp-chip { display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 999px; font-size: .74rem;
+  border: 1px solid var(--rule); color: var(--ink-2); }
+.hp-chip svg { width: 12px; height: 12px; }
+.hp-chip.ok { color: var(--ok); border-color: color-mix(in oklab, var(--ok) 40%, transparent);
+  background: color-mix(in oklab, var(--ok) 10%, transparent); }
+
+.hlink { display: inline-flex; align-items: center; gap: 6px;
+  border: 0; background: transparent; cursor: pointer; font: inherit;
+  font-size: .78rem; color: var(--ink-2); padding: 4px 2px; }
+.hlink svg { width: 13px; height: 13px; }
+.hlink:hover { color: var(--accent); }
+
+.hp-bar { height: 6px; border-radius: 999px; background: var(--sunk);
+  overflow: hidden; border: 1px solid var(--rule); }
+.hp-bar i { display: block; height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, #22d3ee, #818cf8 42%, #4ade80);
+  box-shadow: 0 0 18px -4px #4ade80;
+  transition: width .9s cubic-bezier(.2,.8,.2,1); }
+
+/* ---------- 3 · MODULLAR ---------- */
+.hmods { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+
+.hmod { position: relative; border-radius: 15px; overflow: hidden;
+  border: 1px solid var(--rule); background: var(--surface);
+  transition: border-color .2s, box-shadow .2s, transform .16s cubic-bezier(.2,.8,.2,1); }
+.hmod::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--hc); opacity: .55; }
+.hmod:hover { transform: translateY(-2px);
+  border-color: color-mix(in oklab, var(--hc) 40%, var(--rule));
+  box-shadow: 0 18px 40px -28px rgba(0,0,0,.9), 0 0 34px -22px var(--hc); }
+/* Ochiq modul butun qatorni egallaydi. Agar u qatorning ikkinchisi bo'lsa,
+   yonidagi kartochka yolg'iz qolib chap tomonda bo'sh teshik ochilardi —
+   shuning uchun o'sha juftini ham kengaytiramiz. */
+.hmod.wide { grid-column: 1 / -1; }
+.hmod.on { grid-column: 1 / -1;
+  border-color: color-mix(in oklab, var(--hc) 52%, var(--rule));
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--hc) 22%, transparent),
+              0 24px 56px -30px rgba(0,0,0,.9); }
+.hmod.on::before { opacity: 1; }
+.hmod.full::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(60% 100% at 100% 0%,
+    color-mix(in oklab, var(--ok) 9%, transparent), transparent 60%); }
+
+.hmod-h { display: flex; align-items: center; gap: 12px; width: 100%;
+  padding: 15px 15px 13px 18px; border: 0; background: transparent;
+  color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.hmod-no { font-family: var(--mono); font-size: 11px; font-weight: 700;
+  letter-spacing: .1em; color: var(--hc); opacity: .8; }
+.hmod-t { flex: 1; min-width: 0; }
+.hmod-t b { display: block; font-size: 1rem; font-weight: 650; line-height: 1.3;
+  overflow: hidden; text-overflow: ellipsis; }
+.hmod-t small { display: block; margin-top: 3px; font-size: .74rem; color: var(--ink-2); }
+
+.hmod-r { position: relative; flex: none; width: 42px; height: 42px; display: grid;
+  place-items: center; }
+.hmod-r em { position: absolute; font-style: normal; font-family: var(--mono);
+  font-size: 12px; font-weight: 700; }
+.hring { transform: rotate(-90deg); }
+.hr-bg { fill: none; stroke: var(--rule); stroke-width: 3; }
+.hr-fg { fill: none; stroke-width: 3; stroke-linecap: round;
+  transition: stroke-dashoffset 1s cubic-bezier(.2,.8,.2,1); }
+
+.hmod-c { flex: none; color: var(--ink-2); transition: transform .2s, color .2s; }
+.hmod-c svg { width: 16px; height: 16px; display: block; }
+.hmod.on .hmod-c { transform: rotate(90deg); color: var(--hc); }
+
+/* nuqtalar — butun modul bir qarashda */
+.hdots { display: flex; flex-wrap: wrap; gap: 4px; padding: 0 16px 14px 18px; }
+.hdot { width: 100%; max-width: 22px; height: 4px; border-radius: 99px; flex: 1 1 12px;
+  background: var(--rule); transition: background .3s; }
+.hdot.s-bilgan   { background: #22d3ee; }
+.hdot.s-amaliyot { background: #4ade80; }
+.hdot.s-takror   { background: #fb923c; }
+.hdot.s-ochiq    { background: color-mix(in oklab, var(--ink-2) 45%, transparent); }
+
+/* ochilgan mavzular */
+/* Mavzu nomlari uzun — ikki ustundan ortig'ida kesilib ketadi */
+.hrows { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 6px; padding: 4px 14px 16px; }
+.hrow { display: flex; align-items: center; gap: 10px; width: 100%;
+  padding: 10px 12px; border-radius: 10px; cursor: pointer;
+  border: 1px solid transparent; background: var(--sunk);
+  color: inherit; font: inherit; text-align: left;
+  transition: background .15s, border-color .15s, transform .15s; }
+.hrow:hover { background: var(--paper); transform: translateX(2px);
+  border-color: color-mix(in oklab, var(--hc) 38%, var(--rule)); }
+.hr-n { flex: none; width: 24px; height: 24px; border-radius: 7px; display: grid;
+  place-items: center; font-family: var(--mono); font-size: 10.5px; font-weight: 700;
+  background: var(--rule); color: var(--ink-2); }
+.hrow.s-bilgan .hr-n   { background: color-mix(in oklab, #22d3ee 22%, transparent); color: #22d3ee; }
+.hrow.s-amaliyot .hr-n { background: color-mix(in oklab, #4ade80 22%, transparent); color: #4ade80; }
+.hrow.s-takror .hr-n   { background: color-mix(in oklab, #fb923c 24%, transparent); color: #fb923c; }
+.hr-t { flex: 1; min-width: 0; font-size: .88rem; line-height: 1.35;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hr-b { flex: none; color: var(--ok); opacity: .75; }
+.hr-b svg { width: 12px; height: 12px; display: block; }
+.hr-s { flex: none; font-family: var(--mono); font-size: 9.5px; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--ink-3, var(--ink-2)); opacity: .75; }
+.hrow.s-takror .hr-s { color: #fb923c; opacity: 1; }
+.hrow.s-yopiq { opacity: .45; }
+
+/* ---------- kirish animatsiyasi ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .hero, .hprog, .hmod { animation: hin .42s cubic-bezier(.2,.8,.2,1) backwards; }
+  .hprog { animation-delay: .05s; }
+  .hmod:nth-child(1) { animation-delay: .08s } .hmod:nth-child(2) { animation-delay: .11s }
+  .hmod:nth-child(3) { animation-delay: .14s } .hmod:nth-child(4) { animation-delay: .17s }
+  .hmod:nth-child(5) { animation-delay: .20s } .hmod:nth-child(6) { animation-delay: .23s }
+  .hmod:nth-child(7) { animation-delay: .26s } .hmod:nth-child(8) { animation-delay: .29s }
+  .hmod:nth-child(9) { animation-delay: .32s } .hmod:nth-child(10){ animation-delay: .35s }
+  @keyframes hin { from { opacity: 0; transform: translateY(10px) } to { opacity: 1; transform: none } }
+}
+
+/* ---------- telefon ---------- */
+@media (max-width: 720px) {
+  .home { gap: 16px; }
+  .hmods { grid-template-columns: 1fr; }
+  .hero-in { padding: 18px 16px 4px; gap: 14px; }
+  .hero-num { width: 50px; height: 50px; font-size: 20px; border-radius: 13px; }
+  .hero-txt h2 { font-size: 1.32rem; }
+  .hero-act { padding: 14px 16px 16px; }
+  .hbtn { flex: 1 1 100%; justify-content: center; }
+  .hp-n b { font-size: 1.3rem; }
+  .hrows { grid-template-columns: 1fr; padding: 4px 12px 14px; }
+  .hmod-h { padding: 13px 12px 11px 16px; }
+  .hdots { padding: 0 13px 12px 16px; }
+}
+
+/* ---------- ko'rinish almashtirgichi ---------- */
+.hview { display: inline-flex; align-self: flex-start; gap: 3px; padding: 3px;
+  border-radius: 12px; border: 1px solid var(--rule); background: var(--sunk); }
+.hv { display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 15px; border-radius: 9px; border: 0; background: transparent;
+  color: var(--ink-2); font: inherit; font-size: .84rem; cursor: pointer;
+  transition: color .16s, background .16s, box-shadow .16s; }
+.hv svg { width: 14px; height: 14px; }
+.hv:hover { color: var(--ink); }
+.hv.on { background: var(--surface); color: var(--ink); font-weight: 600;
+  box-shadow: 0 1px 0 rgba(255,255,255,.04) inset, 0 2px 8px -3px rgba(0,0,0,.6),
+              0 0 0 1px color-mix(in oklab, var(--accent) 18%, transparent); }
+
+/* ---------- qahramon kartani kuchaytirish ---------- */
+.hero::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 100% 100%,
+      color-mix(in oklab, var(--hc) 7%, transparent), transparent 55%);
+  mix-blend-mode: screen; }
+.hero-in { padding-top: 26px; }
+.hero-txt h2 { font-size: 1.78rem; }
+.hero-num { position: relative; }
+.hero-num::after { content: ""; position: absolute; inset: -1px; border-radius: inherit;
+  border: 1px solid color-mix(in oklab, var(--hc) 30%, transparent);
+  animation: hpulse 3.4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .hero-num::after { animation: none } }
+@keyframes hpulse {
+  0%,100% { transform: scale(1); opacity: .55 }
+  50%     { transform: scale(1.13); opacity: 0 }
+}
+
+/* ---------- taraqqiyot chizig'ini kuchaytirish ---------- */
+.hp-bar { height: 8px; }
+.hp-bar i { position: relative; }
+.hp-bar i::after { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 22px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.45));
+  border-radius: 999px; }
+
+/* ---------- modul halqasi ichidagi raqam ---------- */
+.hmod-r em { color: var(--hc); }
+.hmod.full .hmod-r em { color: var(--ok); }
 
 </style>
 </head>
@@ -2490,14 +2720,17 @@ function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').
 /* ---------- SVG ---------- */
 function mapSvg() {
   const g = gLayout();
-  const VB = 620;   /* ko'rinish yarim o'lchami */
+  /* Ko'rinish yarim o'lchami. Eng uzun modul nomlari (3- va 4-modul)
+     o'ng chetda ~645 gacha yetadi — ramka shundan keng bo'lishi kerak,
+     aks holda yorliq so'z o'rtasidan kesiladi. */
+  const VB = 680;
 
   /* modul halolari — yumshoq dog', murakkab geometriyasiz */
   const halos = D.modules.map(m => {
     const c = g.cen[m.id], col = MCOL[m.id];
     const done = m.topics.filter(id => gState(id) === 'bilgan' || gState(id) === 'amaliyot').length;
     /* yorliq modul markazidan tashqariga — aylana markazidan uzoqroq tomonga */
-    const lx = c.x + Math.cos(c.a) * (c.r + 16);
+    const lx = c.x + Math.cos(c.a) * (c.r + 30);
     const ly = c.y + Math.sin(c.a) * (c.r + 34) + (Math.abs(Math.cos(c.a)) > 0.35 ? 0 : (Math.sin(c.a) > 0 ? 20 : -8));
     /* yorliq halqa ustiga tushmasin — tomonga qarab tekislanadi */
     const anch = Math.cos(c.a) > 0.35 ? "start" : (Math.cos(c.a) < -0.35 ? "end" : "middle");
@@ -2548,14 +2781,17 @@ function mapSvg() {
 }
 
 /* ---------- ustki panel ---------- */
-function mapHud() {
+function mapLegend() {
   const legend = MAPMODE === 'holat'
     ? Object.keys(GST).map(k =>
         `<span class="glg"><i style="background:${GST[k].c}"></i>${GST[k].n}</span>`).join('')
     : D.modules.map(m =>
         `<button class="glg b" onclick="mapFocusMod(${m.id})">
            <i style="background:${MCOL[m.id]}"></i>${esc(m.name)}</button>`).join('');
+  return `<div class="glgs">${legend}</div>`;
+}
 
+function mapHud() {
   return `<div class="ghud">
     <div class="gseg">
       <button class="gsb ${MAPMODE === 'modul' ? 'on' : ''}" onclick="setMapMode('modul')">Modul</button>
@@ -2566,8 +2802,7 @@ function mapHud() {
       <button class="gzb" onclick="mapZoom(0.8)" aria-label="Kichiklashtirish">−</button>
       <button class="gzb" onclick="mapReset()" aria-label="Boshiga">↺</button>
     </div>
-  </div>
-  <div class="glgs">${legend}</div>`;
+  </div>`;
 }
 
 /* ---------- kursor ---------- */
@@ -2633,6 +2868,11 @@ function renderMap() {
   const wrap = document.getElementById('mapwrap');
   if (!wrap) return;
   wrap.innerHTML = mapHud() + mapSvg();
+  /* Afsona xarita ustida emas, ostida turadi. Ilgari u ichkarida
+     suzib turardi va telefonda uch qatorga cho'zilib grafning
+     pastki to'dalarini to'sib qo'yardi. */
+  const lgs = document.getElementById('maplgs');
+  if (lgs) lgs.innerHTML = mapLegend();
   applyMV();
   mapBind();
 }
@@ -2897,6 +3137,214 @@ function essayExport() {
     return `## ${t.id}. ${t.name}\n\n**Baho:** ${e.sc}/5 · **Sana:** ${e.d}\n**Modul:** ${M[T[t.id].m].name}\n\n${e.txt}\n`;
   }).join('\n---\n\n');
   dl('Amaliyot daftari.md', md_);
+}
+
+/* ==================== BOSH EKRAN ====================
+   Uch qatlam, aniq ierarxiya:
+     1. BITTA davom etish kartasi  — nima qilish kerakligi
+     2. Yupqa taraqqiyot chizig'i  — qayerdaligingiz
+     3. Modul kartochkalari        — butun kurs bir qarashda
+
+   Ilgari tepada beshta banner navbatga turardi va 77 qator
+   bir xil devor bo'lib cho'zilardi. */
+
+let HOPEN = null;   /* ochilgan modul */
+
+/* markdown belgilarini olib tashlash — sarlavhada xom ** chiqmasin */
+function hPlain(x) {
+  return String(x || '').replace(/<[^>]+>/g, '')
+    .replace(/[*_`]/g, '')
+    .replace(/\s+/g, ' ').trim();
+}
+
+function hState(id) {
+  const c = st(id);
+  if (typeof bDone === 'function' && bDone(id)) return 'amaliyot';
+  if (c.s === 'held' || c.s === 'crit') return dueIn(id) <= 0 ? 'takror' : 'bilgan';
+  if (c.s === 'lost') return 'takror';
+  if (c.s === 'open') return 'ochiq';
+  return 'yopiq';
+}
+const HST = {
+  amaliyot: { n: 'Amaliyot bajarilgan', s: 'Amaliyot' },
+  bilgan:   { n: "O'rganilgan",        s: "O'rganilgan" },
+  takror:   { n: 'Takrorlash vaqti',   s: 'Takrorlash' },
+  ochiq:    { n: 'Boshlanmagan',       s: 'Boshlash' },
+  yopiq:    { n: 'Hali ochilmagan',    s: '—' }
+};
+
+function hRing(done, all, col, size) {
+  const R = (size || 40) / 2 - 3.5;
+  const C = 2 * Math.PI * R;
+  const p = all ? done / all : 0;
+  const s = size || 40;
+  return `<svg class="hring" viewBox="0 0 ${s} ${s}" width="${s}" height="${s}" aria-hidden="true">
+    <circle cx="${s/2}" cy="${s/2}" r="${R}" class="hr-bg"/>
+    <circle cx="${s/2}" cy="${s/2}" r="${R}" class="hr-fg" stroke="${col}"
+      stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C * (1 - p)).toFixed(1)}"/>
+  </svg>`;
+}
+
+/* ---------- 1 · davom etish ---------- */
+function hHero() {
+  /* Ustuvorlik: tugallanmagan test → yakuniy holat → takrorlash → navbatdagi mavzu */
+  if (S.bat) {
+    return hHeroCard({
+      tag: 'Tugallanmagan test', title: batLabel(), sub: 'Qoldirgan joyingizdan davom etadi',
+      col: 'var(--warn)', act: 'batResume()', btn: 'Davom etish', ic: 'pause'
+    });
+  }
+  const due = dueList();
+  if (due.length) {
+    const t = due[0];
+    return hHeroCard({
+      tag: 'Takrorlash vaqti keldi', title: due.length + ' mavzu kutmoqda',
+      sub: due.slice(0, 3).map(x => x.name).join(' · ') + (due.length > 3 ? ' · +' + (due.length - 3) : ''),
+      col: '#fb923c', act: 'reviewRun()', btn: 'Takrorlashni boshlash', ic: 'clock',
+      num: due.length
+    });
+  }
+  /* Hamma modul yakunlangach — o'nta modulni bir joyga bog'laydigan
+     katta amaliy holat. Ilgari u faqat banner orqali ochilardi; banner
+     olib tashlangach yagona kirish yo'li shu. Bir marta ishlangach
+     qahramon kartani band qilib turmasin. */
+  if (S.flags.length === 10 && !S.bossWin) {
+    return hHeroCard({
+      tag: 'Barcha 10 modul yakunlandi', title: 'Yakuniy amaliy holat',
+      sub: "Katta mijoz · 96 xodim · 6 bog'langan muammo — zanjirni tiklab, boshlash nuqtasini toping",
+      col: '#facc15', act: 'finalBoss()', btn: 'Holatni ochish', ic: 'crown'
+    });
+  }
+  const nx = nextTarget();
+  if (nx) {
+    const t = T[nx];
+    return hHeroCard({
+      tag: t.m + '-modul · ' + D.modules[t.m - 1].name, title: t.name,
+      sub: hPlain(t.one).slice(0, 130),
+      col: topicCol(nx), act: 'pick(' + nx + ')', btn: st(nx).s === 'lost' ? 'Qaytarish' : 'Boshlash',
+      ic: 'right', num: nx, note: nx
+    });
+  }
+  return hHeroCard({
+    tag: 'Hammasi tugadi', title: "77 mavzu o'rganildi",
+    sub: 'Endi takrorlash jadvali sizni kerakli paytda chaqiradi',
+    col: '#4ade80', act: 'bankStart()', btn: 'Test bankida mashq', ic: 'check'
+  });
+}
+
+function hHeroCard(o) {
+  return `<section class="hero" style="--hc:${o.col}">
+    <div class="hero-glow" aria-hidden="true"></div>
+    <div class="hero-in">
+      ${o.num != null ? `<div class="hero-num">${o.num}</div>` : ''}
+      <div class="hero-txt">
+        <span class="hero-tag">${esc(o.tag)}</span>
+        <h2>${esc(o.title)}</h2>
+        ${o.sub ? `<p>${esc(o.sub)}</p>` : ''}
+      </div>
+    </div>
+    <div class="hero-act">
+      <button class="hbtn go" onclick="${o.act}">${ico(o.ic)} ${o.btn}</button>
+      ${o.note ? `<button class="hbtn ghost" onclick="note(${o.note},'')">
+        ${ico('book')} Avval materialni o'qish</button>` : ''}
+    </div>
+  </section>`;
+}
+
+/* ---------- 2 · taraqqiyot ---------- */
+function hProgress() {
+  const all = D.topics.length;
+  const done = D.topics.filter(t => held(t.id)).length;
+  const prac = D.topics.filter(t => typeof bDone === 'function' && bDone(t.id)).length;
+  const pct = Math.round(done / all * 100);
+  const bank = done ? `<button class="hlink" onclick="bankStart()">
+      ${ico('dice')} Test banki · ${done * 25} savol</button>` : '';
+  return `<section class="hprog">
+    <div class="hp-top">
+      <div class="hp-n"><b>${done}</b><span>/ ${all} mavzu o'rganildi</span></div>
+      <div class="hp-side">
+        ${prac ? `<span class="hp-chip ok">${ico('shield')} ${prac} amaliyot</span>` : ''}
+        ${bank}
+      </div>
+    </div>
+    <div class="hp-bar"><i style="width:${pct}%"></i></div>
+  </section>`;
+}
+
+/* ---------- 3 · modul kartochkalari ---------- */
+function hModules() {
+  /* Ochiq modul qatorning ikkinchisi bo'lsa, uning chapdagi juftini ham
+     kengaytiramiz — aks holda yonida bo'sh katak qolib ketadi. */
+  const oi = HOPEN ? D.modules.findIndex(m => m.id === HOPEN) : -1;
+  const wide = (oi > 0 && oi % 2 === 1) ? D.modules[oi - 1].id : 0;
+  return `<section class="hmods">${D.modules.map(m => hModCard(m, wide)).join('')}</section>`;
+}
+
+function hModCard(m, wide) {
+  const col = MCOL[m.id] || 'var(--accent)';
+  const done = m.topics.filter(id => held(id)).length;
+  const all = m.topics.length;
+  const open = HOPEN === m.id;
+  const full = done === all;
+
+  const dots = m.topics.map(id =>
+    `<i class="hdot s-${hState(id)}" title="${esc(T[id].name)}"></i>`).join('');
+
+  const rows = open ? `<div class="hrows">${m.topics.map(id => hRow(id)).join('')}</div>` : '';
+
+  return `<article class="hmod${open ? ' on' : ''}${full ? ' full' : ''}${m.id === wide ? ' wide' : ''}" style="--hc:${col}">
+    <button class="hmod-h" onclick="hToggle(${m.id})" aria-expanded="${open}">
+      <span class="hmod-no">${String(m.id).padStart(2, '0')}</span>
+      <span class="hmod-t">
+        <b>${esc(m.name)}</b>
+        <small>${done} / ${all} mavzu${full ? ' · tugallandi' : ''}</small>
+      </span>
+      <span class="hmod-r">${hRing(done, all, col, 42)}<em>${done}</em></span>
+      <span class="hmod-c">${ico('right')}</span>
+    </button>
+    <div class="hdots">${dots}</div>
+    ${rows}
+  </article>`;
+}
+
+function hRow(id) {
+  const t = T[id], s = hState(id);
+  const b = (typeof bHas === 'function' && bHas(id));
+  return `<button class="hrow s-${s}" onclick="pick(${id})">
+    <span class="hr-n">${id}</span>
+    <span class="hr-t">${esc(t.name)}</span>
+    ${b && s !== 'yopiq' ? `<span class="hr-b" title="Amaliyot vazifasi bor">${ico('shield')}</span>` : ''}
+    <span class="hr-s">${HST[s].s}</span>
+  </button>`;
+}
+
+function hToggle(m) {
+  HOPEN = HOPEN === m ? null : m;
+  render();
+  if (HOPEN) setTimeout(() => {
+    const el = document.querySelector('.hmod.on');
+    if (el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, 60);
+}
+
+/* ---------- yig'ish ---------- */
+
+/* Ikkala ko'rinish ham ayni bir almashtirgichdan foydalanadi —
+   ilgari xaritada boshqacha ko'rinishdagi tugmalar turardi. */
+function hViewBar(cur) {
+  const b = (v, ic, tx) => cur === v
+    ? `<button class="hv on">${ico(ic)} ${tx}</button>`
+    : `<button class="hv" onclick="setView('${v}')">${ico(ic)} ${tx}</button>`;
+  return `<div class="hview">${b('map', 'link', 'Bilim xaritasi')}${b('list', 'list', "Ro'yxat")}</div>`;
+}
+
+function homeHtml() {
+  return `<div class="home">
+    ${hViewBar('list')}
+    ${hHero()}
+    ${hProgress()}
+    ${hModules()}
+  </div>`;
 }
 
 /* ===================== B DARAJA — MUSTAHKAMLASH =====================
@@ -3907,77 +4355,26 @@ function render() {
   sLvl.textContent = D.topics.filter(t => held(t.id) && dueIn(t.id) <= 0).length;
   sBar.style.width = (cap / 77 * 100) + '%';
 
-  const allFlags = S.flags.length === 10;
-  const bossBox = allFlags ? `<button class="banner boss" onclick="finalBoss()">
-      <span class="bi">${ico('crown')}</span>
-      <span><small>Yakuniy boss</small><b>Katta mijoz</b>
-        <span class="lbl" style="display:block;margin-top:3px">96 xodim · 6 bog'langan muammo · 10 modul</span></span>
-      <span class="bx">${S.bossWin ? 'yengilgan' : 'testga kirish →'}</span>
-    </button>` : '';
-
-  const nx = nextTarget();
-  const nxBox = nx ? `<button class="banner" onclick="pick(${nx})">
-      <span class="bi">${ico('right')}</span>
-      <span><small>Navbatdagi nishon · ${T[nx].m}-modul</small><b>${nx}. ${T[nx].name}</b></span>
-      <span class="bx">${st(nx).s === 'lost' ? 'qaytarish' : 'test'} →</span>
-    </button>` : '';
-  const batBox = S.bat ? `<button class="banner warn2" onclick="batResume()">
-      <span class="bi">${ico('pause')}</span>
-      <span><small>Tugallanmagan test</small><b>${batLabel()}</b></span>
-      <span class="bx">davom etish →</span>
-    </button>` : '';
-  const due = dueList();
-  const dueBox = due.length ? `<button class="banner due" onclick="reviewRun()">
-      <span class="bi">${ico('clock')}</span>
-      <span><small>Takrorlash navbati</small><b>${due.length} mavzu muddati yetdi</b>
-        <span class="lbl" style="display:block;margin-top:3px">${due.slice(0,3).map(t=>t.id+'. '+t.name).join(' · ')}${due.length>3?' · +'+(due.length-3):''}</span></span>
-      <span class="bx">boshlash →</span>
-    </button>` : '';
-  const bankN = D.topics.filter(t => held(t.id)).length;
-  const bankBox = bankN ? `<button class="banner alt" onclick="bankStart()">
-      <span class="bi">${ico('dice')}</span>
-      <span><small>Cheksiz mashq</small><b>Test banki</b></span>
-      <span class="bx">${bankN} mavzu<br>${bankN * 25} savol</span>
-    </button>` : '';
-
-  const banners = bossBox + batBox + dueBox + nxBox + bankBox;
+  /* Ilgari bu yerda beshta banner navbatga turardi — "navbatdagi nishon",
+     "cheksiz mashq", "yakuniy boss" va hokazo. Ular ekran tepasini
+     tasodifiy yozuvlar bilan to'ldirardi. Endi ularning o'rnida bitta
+     qahramon kartasi turadi (hHero) — u o'zi eng muhim qadamni tanlaydi
+     va ikkala ko'rinishda ham bir xil ko'rinadi. */
 
   if (S.view !== 'list') {
-    map.innerHTML = banners + '<div class="mapwrap" id="mapwrap"></div>';
+    /* Almashtirgich xarita rejimida ham turishi SHART —
+       aks holda ro'yxatga qaytish yo'li qolmaydi. */
+    map.innerHTML = `<div class="home">${hViewBar('map')}${hHero()}</div>` +
+      `<div class="mapwrap" id="mapwrap"></div><div id="maplgs"></div>`;
     renderMap();
     setTimeout(() => { let ch = 0; for (const k in S.t) if (S.t[k].nw) { delete S.t[k].nw; ch = 1; } if (ch) save(); }, 2600);
     return;
   }
 
-  const C = 2 * Math.PI * 11;
-  map.innerHTML = banners + `<div class="mapbar"><div class="mseg">
-      <button class="msb" onclick="setView('map')">${ico('link')} Bilim xaritasi</button>
-      <button class="msb on">${ico('list')} Ro'yxat</button></div></div>` + D.modules.map(m => {
-    const done = m.topics.filter(held).length;
-    const fl = S.flags.includes(m.id);
-    const any = m.topics.some(id => st(id).s !== 'fog');
-    const pct = done / m.topics.length;
-    return `<section class="prov ${fl ? 'flag' : ''} ${any ? '' : 'dim'}">
-      <button class="phead" onclick="tog(${m.id})" aria-expanded="${any}">
-        <span class="pidx">${fl ? ico('flag') : String(m.id).padStart(2, '0')}</span>
-        <span class="ptitle">${m.name}</span>
-        ${!any ? '<span class="pfog">tuman ostida</span>' : `
-          ${modDone(m.id) && !fl ? '<span class="pfin">final</span>' : ''}
-          <span class="pprog"><b>${done}</b>/${m.topics.length}</span>
-          <svg class="pring" width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
-            <circle class="tr" cx="13" cy="13" r="11"/>
-            <circle class="fg" cx="13" cy="13" r="11"
-              stroke-dasharray="${(C * pct).toFixed(1)} ${C.toFixed(1)}"/>
-          </svg>`}
-      </button>
-      <div class="plist" id="g${m.id}" ${any ? '' : 'style="display:none"'}>
-        ${m.topics.map(id => cell(id, nx)).join('')}
-        ${modDone(m.id) && !fl ? `<button class="row final" onclick="duel(${m.id})">
-          <span class="node">${ico('flag')}</span>
-          <span><span class="rname">Modul yakuniy testi</span><span class="rmeta">final · 3 raund</span></span>
-          <span class="rright"><span class="rgo">boshlash →</span></span></button>` : ''}
-      </div></section>`;
-  }).join('');
+  /* Yangi bosh ekran: bitta davom etish kartasi, taraqqiyot chizig'i
+     va modul kartochkalari. Ilgari bu yerda beshta banner navbatga
+     turardi va 77 qator bir xil devor bo'lib cho'zilardi. */
+  map.innerHTML = homeHtml();
 
   // "yangi ochildi" nishonini bir marta ko'rsatib, o'chiramiz
   setTimeout(() => { let ch = 0; for (const k in S.t) if (S.t[k].nw) { delete S.t[k].nw; ch = 1; } if (ch) save(); }, 2600);
@@ -4654,10 +5051,10 @@ function winFlag(m) {
 /* keyslar — modul bo'yicha */
 const CASES = {"1":{"biz":"Qo'qondagi mebel ustaxonasi · 19 xodim · 6 yil","say":"Egasi **Ulug'bek** — shahardagi eng yaxshi usta. Kuniga 13-14 soat ishlaydi, murakkab buyurtmani faqat o'zi bajaradi.\n\n*«Ikki yildan beri aylanma bir joyda turibdi. Eng yaxshi ustamni sex boshlig'i qilib qo'ydim — olti oyda ishni tashlab ketdi. Ikkinchisini qo'ydim, u ham eplolmadi. Odamlar yollayman, uch oyda ketishadi. Men dam olishga chiqsam, ish to'xtaydi. Menga yaxshi sotuvchi kerak shekilli — reklama ham berib ko'rdim, foydasi bo'lmadi.»*","root":"Muammo sotuvda ham, odamlarda ham emas. **Biznes butunlay egaga bog'langan** — bilim, qaror va sifat standarti Ulug'bekning boshida. Ikkinchi qatlam: eng yaxshi **usta**ni rahbar qilish — texnik malakani munosabat malakasi bilan chalkashtirish. Uchinchi qatlam: Ulug'bek muammoni **strategiya** darajasida deb o'ylaydi (*«sotuvchi kerak»*), aslida buzilgan qavat — **jarayon**.","topics":["**Biznes tizimlashtirish nima** — natija odamga bog'langan; «biznes yo'q, ish o'rni bor»","**Texnik Munosabat Tahlil qatlamlari** — eng yaxshi usta avtomatik yaxshi rahbar bo'lmaydi","**Strategiya Jarayon Ijro piramidasi** — pastki qavat (jarayon) buzilgan, u yuqorida (sotuv) ko'rinadi","**A va B nuqta metodikasi** — «aylanma turibdi» shikoyat, B nuqta emas; avval A ni raqamlash kerak","**Karyera xaritasi va shogirdlik modeli** — ustalar uchun o'sish yo'li yo'q, shuning uchun 3 oyda ketishadi"],"steps":["**Bir hafta kuzatuv** — Ulug'bek har kuni nima qilganini yozadi; uch ustunga ajratadi.","**Eng ko'p takrorlanadigan bitta jarayonni yozish** — o'lchov olish yoki buyurtma qabuli; SOP ga aylantiriladi.","**Sex boshlig'i masalasini qayta qo'yish** — texnik rolni boshqaruv rolidan ajratish, gorizontal o'sish yo'lini ochish."],"kpi":"**Ulug'beksiz bajarilgan buyurtma ulushi.** Yordamchi: yangi xodimning mustaqillikka chiqish muddati (hafta)."},"2":{"biz":"Andijondagi logistika va yetkazib berish · 26 xodim","say":"Egasi **Sanjar** kuniga 12-13 soat ishlaydi va hech narsa ulgurmaydi.\n\n*«Kunim telefon bilan o'tadi. Har kim har narsani mendan so'raydi. Kechqurun o'tirib asosiy ishni qilaman. Rejalashtiryapman — lekin reja bajarilmaydi, kun boshqacha ketadi. Yordamchi oldim, u ham menga savol beradi. Menga ko'proq vaqt kerak.»*","root":"Vaqt yetishmayapti degan tashxis **noto'g'ri**. Sanjarning muammosi vaqtda emas — **e'tiborda va qarorlar oqimida**.\n\nSabab zanjiri: qaror darajalari belgilanmagan → har savol yuqoriga chiqadi → kun uzilishlardan iborat bo'ladi → asosiy ish kechqurunga siljiydi → charchoq → ertasi kuni yana yomonroq. Yordamchi ham **e'tiborni himoya qilish** roliga emas, ijrochi roliga qo'yilgan.","topics":["**Masul piramidasi** — har masala eng quyi mumkin bo'lgan darajada hal bo'lsin","**Delegatsiya** — ish emas, natija uchun mas'uliyat topshiriladi va qaytarib olinmaydi","**Shaxsiy va biznes assistent** — assistent ijrochi emas, e'tiborni himoya qiluvchi rol","**Vaqt jadvali va vaqt bloklari** — asosiy ish kalendarda soat bilan bandlanadi va himoyalanadi","**Eyzenxauer matritsasi** — shoshilinch va muhimni ajratish; ko'p ish umuman o'chiriladi"],"steps":["**Bir hafta uzilishlarni yozish** — kim, nima uchun, qancha vaqt oldi. Naqsh 3-4 turga tushadi.","**Qaror darajalarini yozish** — qaysi summa/masala kimda hal bo'ladi. Bu bitta hujjat kunning yarmini qaytaradi.","**Kuniga 2 soatlik himoyalangan blok** — telefonsiz, kunning eng yaxshi vaqtida."],"kpi":"**Sanjarga kelgan kunlik uzilishlar soni** va **himoyalangan blokda bajarilgan ish ulushi**."},"3":{"biz":"Namangandagi tikuv sexi · 54 xodim · ikki smena","say":"Egasi **Dilshod**: *«Ish bir bo'limdan ikkinchisiga o'tganda yo'qoladi. Bichuvchi tayyor deydi, tikuvchi olmadim deydi. Sifat nazorati ikkalasini ayblaydi. Yig'ilishda hamma bir-birini ko'rsatadi.*\n\n*Xodimlar ko'p, lekin kim nima qilishi aniq emas. Ikki kishi bir ishni qiladi, uchinchi ish esa hech kimniki emas.»*","root":"Bu **munosabat nizosi emas, tuzilma nizosi**. Odamlar yomon emas — **tutashuv** belgilanmagan.\n\nUch bo'shliq: (1) kim kimga hisobot berishi yozilmagan; (2) har o'rindan qanday natija kutilishi yozilmagan; (3) bo'limlar orasida kim nimani, qanday shaklda va qachon topshirishi kelishilmagan. Ayblov — belgi, sabab emas.","topics":["**Bolimlararo chegaralar** — ishlar aynan tutashuvda yo'qoladi; tutashuv shartnomasi kerak","**ORG chart** — kim mavjud, kim kimga hisobot beradi, har o'rin qaysi natija uchun javob beradi","**RACI matritsasi** — bitta ish ichida kim bajaradi, kim javob beradi, kim maslahat beradi","**Lavozim yoriqnomasi** — o'rindan kutilgan natija, vakolat va o'lchov","**Nizolarni hal qilish** — nizo turini aniqlash: bu jarayon nizosi"],"steps":["**Oxirgi 12 oydagi «yo'qolgan ish» holatlarini yozish** — har biri qaysi tutashuvda sodir bo'lgan.","**Uch asosiy tutashuv uchun shartnoma** — nima, qanday shaklda, qachon topshiriladi; qabul mezoni bilan.","**Bo'limlar uchun umumiy ko'rsatkich** — «muddatida va to'liq bajarilgan buyurtma ulushi», uchalasi birga javob beradi."],"kpi":"**Tutashuvda yo'qolgan buyurtma soni** (haftalik) va **umumiy: muddatida bajarilgan buyurtma ulushi**."},"4":{"biz":"Chirchiqdagi metall konstruksiya ishlab chiqarish · 41 xodim","say":"Egasi **Farhod** yangi ERP dastur sotib oldi — 180 mln so'm.\n\n*«Olti oy bo'ldi, hech kim ishlatmayapti. Xodimlar eski usulda, daftarda yozadi. Dasturchilarni aybladim, ikkinchi kompaniyani chaqirdim — u ham eplolmadi.*\n\n*Sifat ham tebranadi: dushanba yaxshi, juma yomon. Braki ko'p, lekin qayerda ekanini topolmayman. Yangi usta kelsa uch oy o'rganadi.»*","root":"**Ishlamayotgan jarayon avtomatlashtirilgan.** Dastur muammo emas — dasturga ko'chiriladigan jarayon **hech qachon yozilmagan** edi.\n\nSifat tebranishi ham shundan: «qanday qilish kerak»ligi yozilmagan, har kim o'zicha qiladi. Brak qayerdaligi topilmasligi ham shundan: jarayon ko'rinmasa, uni o'lchab ham bo'lmaydi. Uch simptom — bitta ildiz.","topics":["**Avtomatlashtirish** — allaqachon ishlayotgan va yozilgan jarayon ko'chiriladi; aks holda tartibsizlik tezlashadi","**Jarayonni tavsiflash** — ko'rilmagan narsani muhokama ham, yaxshilash ham mumkin emas","**SOP** — ishga birinchi kun kelgan odam bajara oladigan darajada aniq","**Standartlashtirish** — eng yaxshi ma'lum usul belgilanadi va yaxshilash nuqtasiga aylanadi","**Bottleneck** — brak va sekinlik tizimning eng sust bo'g'inida to'planadi"],"steps":["**Dasturni to'xtatish** — vaqtincha. Pul allaqachon ketgan, uni tezlashtirish yanada qimmat.","**Bitta jarayonni qog'ozda yozish** — eng ko'p takrorlanadigani. Bir marta bajarilayotganda yozib olinadi.","**Boshqa odamga qo'llanma bo'yicha bajartirish** — qayerda to'xtasa, qo'llanmada teshik bor. To'ldiriladi, keyin dasturga ko'chiriladi."],"kpi":"**Yozilgan va amalda bajarilayotgan jarayonlar soni** hamda **brak ulushi** (jarayon bo'yicha kesim bilan)."},"5":{"biz":"Samarqanddagi mehmonxona va restoran · 62 xodim","say":"Egasi **Bobur** yarim yil oldin KPI joriy qildi.\n\n*«Ofitsiantlarga chek summasi bo'yicha bonus qo'ydim — o'rtacha chek oshdi, lekin mijozlar shikoyat qila boshladi: «majburlab sotishadi». Oshxonaga tezlik ko'rsatkichi qo'ydim — tezlashdi, sifat tushdi.*\n\n*Endi qaysi raqamga ishonishni bilmayman. Hisobotni oy oxirida olaman, o'shanda tuzatib bo'lmaydi.»*","root":"Klassik **Goodhart** holati: o'lchov maqsadga aylanganda, o'lchov sifatida yaroqsiz bo'ladi.\n\nUch xato birga: (1) ko'rsatkichlar **juftliksiz** — hajmga sifat qo'shilmagan; (2) ko'rsatkichlar **bir tomonlama** — faqat moliya va jarayon, mijoz va o'sish tomoni yo'q; (3) **ritm noto'g'ri** — oyiga bir marta ko'rilgan raqam boshqarish quroli emas, tarix.","topics":["**KPI asoslari** — Goodhart qonuni; ko'rsatkich juftlanishi shart","**KPI tizimini qurish** — alohida raqamlar emas, kompaniyadan lavozimgacha bog'langan tizim","**Balanced Scorecard** — to'rt tomondan bir vaqtda o'lchash","**Hisobot ritmi va dashboard** — qaysi raqam qanchalik tez-tez va kim bilan ko'riladi","**Xodim motivatsiya tizimi** — aldash testi: bu bonusni olishning eng oson yo'li nima?"],"steps":["**Aldash testi** — har mavjud ko'rsatkich uchun: uni olishning eng oson yo'li nima? Javob yoqmasa, tuzatiladi.","**Har hajm ko'rsatkichiga sifat juftligi** — o'rtacha chek + mijoz qoniqishi; tezlik + qaytarilgan taom ulushi.","**Ritmni haftalikka ko'chirish** — 20 daqiqalik ko'rik, 4-5 raqam, mas'ul bilan."],"kpi":"**Juftlangan ko'rsatkichlar ulushi** va **haftalik ko'rikda ko'riladigan raqamlar soni** (oylik emas)."},"6":{"biz":"Buxorodagi qurilish materiallari savdosi · 33 xodim","say":"Egasi **Aziz**: *«Buxgalter foyda bor deydi — yiliga 900 mln. Lekin kassada doim pul yo'q. Maosh kuni kredit olaman. Buni tushunmayapman.*\n\n*Sotuv o'syapti, aylanma o'syapti, lekin qo'lda hech narsa qolmayapti. Chegirma beramiz — mijoz ko'payadi. Reklamaga ko'p sarflayapmiz, mijoz keladi. Nima noto'g'ri?»*","root":"Uch alohida chalkashlik bir-birini kuchaytirmoqda:\n\n(1) **Foyda va naqd pul** ajratilmagan — foyda hisobda, pul kassada; debitorlik va ombor pulni yeb turibdi.\n(2) **Marja va ustama** chalkashtirilgan — chegirma marjani kutilganidan ancha ko'proq yeydi.\n(3) **CAC hisoblanmagan** — mijoz kelmoqda, lekin har biri qanchaga tushayotgani va qancha qaytarayotgani noma'lum.\n\nO'sish o'z-o'zidan foyda emas: **foydasiz o'sish pulni tezroq yeydi**.","topics":["**Moliyaviy asoslar** — tushum, xarajat, foyda va naqd pul to'rt boshqa narsa","**Pul oqimi** — foyda hisobda, pul kassada; foydali biznes pul yetishmasligidan yopiladi","**Marja** — har sotilgan so'mdan qancha qolishi; ustama bilan bir xil emas","**CAC** — bitta yangi mijozni jalb qilish qancha turadi va u marketing byudjetidan katta","**LTV va LTV CAC nisbati** — har sarflangan so'm qancha qaytaradi"],"steps":["**12 oylik pul oqimi jadvali** — kirim va chiqim sanasi bilan; qayerda qotib qolgani ko'rinadi.","**Mahsulot bo'yicha marja hisobi** — deyarli har doim 2-3 pozitsiya zararga ishlayotgani chiqadi.","**CAC va LTV ni kanal bo'yicha hisoblash** — keyin byudjet eng yaxshi nisbatga ko'chiriladi."],"kpi":"**Naqd pul aylanma sikli** (kun) va **kanal bo'yicha LTV/CAC nisbati**."},"7":{"biz":"Farg'onadagi bolalar kiyimlari brendi · 28 xodim","say":"Egasi **Malika**: *«Reklamaga oyiga 22 mln sarflayman. Obunachi ko'p, layk ko'p, sotuv kam.*\n\n*Kontent har kuni chiqadi — ba'zan chiqmaydi, chunki ilhom bo'lmaydi. Nima yozishni bilmayman, raqobatchilarnikiga qarayman va shunga o'xshash qilaman.*\n\n*Bizni hamma yaxshi deydi, lekin nima uchun aynan bizni tanlash kerakligini men ham aytolmayman.»*","root":"Marketing **reklama** deb tushunilgan. Aslida ketma-ketlik teskari.\n\nPoydevor yo'q: **kim** (maqsadli mijoz) → **nima uchun** (JTBD) → **nima deb esda qolamiz** (pozitsiya) → **nimani qilmaymiz** (strategiya) → keyin kanal va kontent.\n\nMalika oxirgi bosqichdan boshlagan. Raqobatchini nusxa qilish — pozitsiya yo'qligining belgisi. «Hamma yaxshi deydi» — bu ham belgi: farq yo'q.","topics":["**Maqsadli mijoz** — hamma sizning mijozingiz emas","**JTBD** — mijoz mahsulotni sotib olmaydi, u bir ishni bajarish uchun uni yollaydi","**Pozitsiya** — siz nima deyishingiz emas, mijoz xotirasida qanday o'rin egallashingiz","**Marketing strategiyasi va reja** — strategiya nimani qilmaslikni tanlash","**Kontent reja va media plan** — usiz kontent ilhomga bog'liq bo'ladi va to'xtaydi"],"steps":["**10 ta eng yaxshi mijoz bilan suhbat** — nima uchun sizni tanlagan; JTBD shu yerdan chiqadi.","**Bitta pozitsiya jumlasi yozish** — tanlov ifodalasin, ya'ni kimgadir mos kelmasin.","**Kontent rejasini pozitsiyaga bog'lash** — nima, qachon, qaysi maqsadda; ilhom o'rniga jadval."],"kpi":"**Kanal bo'yicha lid → xarid konversiyasi** va **CAC**. Obunachi va layk — ko'rsatkich emas."},"8":{"biz":"Qarshidagi issiqxona jihozlari sotuvi · 24 xodim","say":"Egasi **Ravshan**: *«So'rov ko'p — oyiga 200 ga yaqin. Shartnoma 12-15 ta.*\n\n*Sotuvchilar chegirma so'raydi: «mijoz qimmat deyapti». Chegirma beramiz, baribir yarmi ketadi. Yirik mijoz esa har yili narxni tushirishni talab qiladi — u tushumning 35% i, rozi bo'lishga majburmiz.*\n\n*Har sotuvchi o'zicha gapiradi. Yaxshisi ketdi — uning usuli ham ketdi.»*","root":"To'rt bo'shliq zanjir hosil qilgan:\n\n(1) **Voronka yo'q** — 200 so'rovdan qayerda yo'qotayotgani ko'rinmaydi.\n(2) **Skript yo'q** — har sotuvchi o'zicha; ular so'ramaydi, **taqdimot qiladi**.\n(3) **E'tiroz aniqlashtirilmaydi** — «qimmat» uch xil ma'noni anglatadi, uchalasiga chegirma beriladi.\n(4) **BATNA yo'q** — yirik mijoz bilan muqobilsiz muzokara qilinmoqda; bu muzokara emas, iltimos.","topics":["**Sotuv voronkasi** — bosqichlarga bo'lmasdan qayerda yo'qotayotganingizni bilib bo'lmaydi","**Sotuv skripti** — «nima aytish» emas, **nima so'rash** ro'yxati; oqibat savollari","**Etirozlar bilan ishlash** — «qimmat» aniqlashtiriladi; chegirmasiz javoblar","**Muzokara asoslari** — muzokara stolda emas, undan oldin BATNA bilan yutiladi","**Konversiya** — uni oshirish reklamani oshirishdan arzon"],"steps":["**Ikki hafta shunchaki sanash** — bosqichlar bo'yicha, hech narsani o'zgartirmasdan. Eng past bosqich topiladi.","**Eng yaxshi sotuvchining 5 suhbatini yozib olish** — skript nazariyadan emas, amaliyotdan chiqariladi.","**Yirik mijoz muzokarasidan 3 oy oldin BATNA ni kuchaytirish** — muqobil mijoz va kanal qidirish."],"kpi":"**Bosqichlararo konversiya** (har bosqich alohida) va **o'rtacha chegirma ulushi**."},"9":{"biz":"Guliston yaqinidagi paxta tozalash korxonasi · 71 xodim","say":"Egasi **Nodira**: *«Yillik kadr ketishi 52%. Maoshni ikki marta oshirdim — o'zgarish bo'lmadi.*\n\n*Ketish suhbatida hamma «shaxsiy sabablar» deydi. Yaxshi mutaxassislar birinchi ketadi. Yangi odam kelsa, uch oy o'rganadi va ko'pincha shu davrda ketadi.*\n\n*Devorga qadriyatlar osdim — «jamoaviylik», «sifat». Hech kim o'qimaydi.»*","root":"Uch qatlam bir-birining ustida:\n\n(1) **O'lchov qatlami** — 52% umumiy raqam; kesimsiz muammo qayerdaligi ko'rinmaydi. Deyarli har doim ketishning yarmi 0-3 oyda va katta qismi bitta rahbarda to'planadi.\n(2) **Sabab qatlami** — maosh **gigiyenik omil**: yetarli bo'lmasa norozilik beradi, yetarli bo'lganda motivatsiya bermaydi. Ketish sabablari deyarli har doim boshqa joyda.\n(3) **Madaniyat qatlami** — devordagi qadriyatlar emas, **amalda nima mukofotlanadi** ishlaydi.","topics":["**Kadr yoqotish** — kesimlar: ish staji, bo'lim va ayniqsa **rahbar** bo'yicha","**Xodim motivatsiya tizimi** — Herzberg: maosh gigiyenik omil, motivator emas","**Onboarding** — 0-3 oy ketishining asosiy yechimi","**Korporativ madaniyat** — amalda nima mukofotlanadi va nimaga yo'l qo'yiladi","**Baholash va fikr mulohaza** — erta signallarni ushlash; suhbatning yarmi xodimniki"],"steps":["**Uch kesim** — ish staji (0-3 oy alohida), bo'lim va rahbar bo'yicha. Bu bir kunlik ish, manzarani butunlay o'zgartiradi.","**3+ oy oldin ketganlarga qo'ng'iroq** — munosabat tugagan, javob halolroq bo'ladi.","**Qoladigan xodimlar bilan suhbat** — «nima sizni ushlab turadi va nima ketishga majbur qilishi mumkin?»"],"kpi":"**Ketish — rahbar va ish staji kesimi bilan** (umumiy foiz emas) va **yangi xodimning mustaqillikka chiqish muddati**."},"10":{"biz":"Urganchdagi maishiy texnika savdosi va servisi · 37 xodim","say":"Egasi **Jamshid** o'zini to'g'riso'z deb hisoblaydi.\n\n*«Muammo ko'rsam darhol aytaman, ovozimni ko'taraman — lekin ichimda saqlamayman. Bu halollik-ku?*\n\n*Ikki yaxshi mutaxassis ketdi, sababini bilmayman. Yig'ilishda hech kim gapirmaydi. Mijoz shikoyat qilsa, sotuvchilar oqlanadi va mijoz yanada asabiylashadi.*\n\n*Bo'limlar o'rtasida eski nizo bor — ikki rahbar bir-biri bilan gaplashmaydi.»*","root":"Bitta ildiz — **rahbarning o'z holatini boshqara olmasligi** — uch joyda ko'rinmoqda.\n\nJamshid reaksiyani halollik deb ataydi. Nazoratsizlik to'g'riso'zlik emas. Kichik jamoada rahbarning holati tez tarqaladi va u **me'yorga** aylanadi: qichqiriq bor joyda hech kim muammo aytmaydi → yig'ilishda sukut → mutaxassislar sababsiz ketadi → sotuvchilar ham mijoz bilan oqlanish rejimida ishlaydi.\n\nBo'lim rahbarlari nizosi esa ehtimol **jarayon nizosi** — 8 oy hal qilinmagani uchun munosabat nizosiga aylangan.","topics":["**EQ** — reaksiya va javob farqi; pauza; tetiklar va ular ostidagi ehtiyoj","**Eshita olish** — sukutni ushlash; «nega?» o'rniga «nima to'sqinlik qildi?»","**Empatiya bildirish** — shikoyatga javob ketma-ketligi; oqlanish emas, fakt va javobgarlik","**Boshqaruv uslublari** — stress ostidagi uslub; buyruq uslubini cheklash","**Nizolarni hal qilish** — avval turini aniqlash: bu tuzilma muammosimi?"],"steps":["**Bir hafta hissiyot yozuvi** — kuniga 2-3 marta: nima his qildim, nima sabab bo'ldi, nima qildim. Tetiklar chiqadi.","**Pauza qoidasi** — yomon xabar eshitganda darhol javob bermaslik; yozma javobni 30 daqiqa yubormaslik.","**Jamoadan so'rash** — «men qanday holatda bo'lganimda siz bilan ishlash qiyin bo'ladi?»"],"kpi":"**«Muammoni aytish xavfsiz» anonim so'rov foizi** va **yig'ilishda ochilgan muammolar soni** (oylik)."},"final":{"biz":"KATTA MIJOZ · Farg'ona vodiysidagi agro klaster · 96 xodim · 4 yo'nalish","say":"**Jahongir** — klaster egasi. To'rt yo'nalish: yetishtirish, qayta ishlash, qadoqlash, savdo.\n\n*«Oltita muammo bor va ular bir-biriga bog'langan. Har biriga alohida urindim — hech biri qimirlamadi.*\n\n*1. Kassada doim pul yo'q, garchi foyda bor.*\n*2. Marja uch yilda 24% dan 17% ga tushdi.*\n*3. Kadr ketishi 38% — ayniqsa qadoqlashda.*\n*4. Reklamaga ko'p sarflaymiz, mijoz kam.*\n*5. Bo'limlar bir-birini ayblaydi, mahsulot kechikadi.*\n*6. Men kun bo'yi yong'in o'chiraman.*\n\n*Qaysi biridan boshlashim kerak?»*","root":"**Oltitasi alohida muammo emas — bitta zanjir.** Uni to'g'ri o'qish kerak:\n\n**Bo'limlararo tutashuv yozilmagan** (5) → mahsulot kechikadi → savdo mijozni ushlab qolish uchun **chegirma beradi** → **marja tushadi** (2) → **naqd pul qisiladi** (1) → maosh va sharoit siqiladi → **kadr ketadi** (3) → yangi odam o'rgatilmaydi (SOP yo'q) → sifat tebranadi → mijoz qaytmaydi → **yangi mijoz qidirish uchun reklamaga ko'proq sarflanadi** (4) → naqd pul yanada qisiladi. Va Jahongir bu zanjirning har bo'g'inida qo'lda aralashadi (6).\n\n**Boshlash nuqtasi — 5-band, tutashuv.** U eng arzon, eng tez ta'sir beradi va zanjirni yuqoridan uzadi. Reklamadan (4) yoki kadrdan (3) boshlash — belgini davolash: zanjir ularni qayta ishlab chiqaradi.\n\n**Boshlashdan oldin: A va B nuqta** — aks holda bu zanjirning o'zi ham taxmin bo'lib qoladi.","topics":["**A va B nuqta metodikasi** — zanjirni taxmin emas, o'lchov bilan aniqlash","**Bolimlararo chegaralar** — ildiz bo'g'in: tutashuv shartnomasi va umumiy ko'rsatkich","**Bottleneck** — tizimni tezlashtirishning yagona yo'li eng sust bo'g'inni kengaytirish","**SOP** va **Standartlashtirish** — sifat tebranishini va o'rgatish muammosini bir vaqtda yopadi","**Marja** va **Pul oqimi** — chegirma zanjirining haqiqiy narxini ko'rsatadi","**Kadr yoqotish** — rahbar va ish staji kesimi; qadoqlashdagi to'planish tasodif emas","**Masul piramidasi** va **Delegatsiya** — Jahongirni yong'in o'chirishdan chiqaradi","**Korporativ madaniyat** — chegirma va yashirish nima uchun mukofotlanayotgani"],"steps":["**A va B nuqta — ikki hafta o'lchov.** Har bo'g'in raqamlanadi: kechikish ulushi, o'rtacha chegirma, ketish kesimi, CAC, Jahongirning uzilishlari.","**Tutashuv shartnomasi va umumiy ko'rsatkich.** Qayta ishlash ↔ qadoqlash ↔ savdo: kim nimani, qanday shaklda, qachon topshiradi. Uch bo'lim bitta ko'rsatkichga birga javob beradi: «muddatida va to'liq bajarilgan buyurtma ulushi».","**Chegirma vakolatini chegaralash** — mas'ul piramidasi bo'yicha. Bu marja qulashini darhol to'xtatadi va zanjirning ikkinchi bo'g'inini uzadi.","**Keyin — bir vaqtda ikki yo'nalish:** SOP (sifat va onboarding) hamda pul oqimi jadvali (naqd bo'shlig'i). Uchtadan ko'p yo'nalishni birdan boshlamang."],"kpi":"**Bosh ko'rsatkich:** muddatida va to'liq bajarilgan buyurtma ulushi — u zanjirning ildiz bo'g'inini o'lchaydi.\n\n**Yordamchi to'rtlik:** o'rtacha chegirma ulushi · naqd pul aylanma sikli (kun) · ketish (rahbar kesimi bilan) · Jahongirga kelgan kunlik uzilishlar soni.\n\n**Yakuniy tekshiruv:** *Jahongir ikki haftaga ta'tilga chiqsa, klaster ishlaydimi?*"}};
 
-/* ---- YAKUNIY BOSS ---- */
+/* ---- YAKUNIY AMALIY HOLAT ---- */
 function finalBoss() {
   const c = CASES.final;
-  open_(ico('crown') + ' Yakuniy boss', `
+  open_(ico('crown') + ' Yakuniy amaliy holat', `
     <div class="card" style="border-color:var(--accent)"><h4>${c.biz}</h4>
       <div style="font-size:14.5px">${md(c.say)}</div></div>
     <div class="card"><h4>Vazifa — 45 daqiqa, yozib javob bering</h4><ul>
@@ -5165,7 +5562,7 @@ function menu() {
       <div><b>${S.crits}</b><small>kritik</small></div>
       <div><b>${S.stk}</b><small>ketma-ket kun</small></div>
       <div><b>${S.ses}</b><small>kun</small></div>
-      <div><b>×${mult().toFixed(1)}</b><small>ball</small></div>
+      <div><b>${D.topics.filter(t => bDone(t.id)).length}</b><small>amaliyot</small></div>
     </div>
 
     <div class="msec">Mashq</div>
@@ -5177,6 +5574,10 @@ function menu() {
       ${tile('chainGame()', 'link', 'Zanjir', "bog'lanishlarni tiklash", '#818cf8')}
       ${tile('essayList()', 'pen', 'Amaliyot daftari', esN ? esN + ' esse' : "hali bo'sh", '#4ade80')}
       ${tile('bList()', 'shield', 'B daraja', bMenuSub(), '#c084fc')}
+      ${tile('finalBoss()', 'crown', 'Yakuniy holat',
+             S.flags.length === 10 ? (S.bossWin ? 'ishlangan — qayta ochish' : "o'nta modul birga")
+                                   : S.flags.length + '/10 modul kerak',
+             '#facc15', S.flags.length !== 10)}
     </div>
 
     ${Object.keys(TOOLS).length ? `<div class="msec">Asboblar — yuklab olish</div>
@@ -5210,7 +5611,7 @@ function menu() {
       <div class="tfx"><b>Sinov rejimi yoqiq</b>
       <span>Barcha mavzu ochiq, test talab qilinmaydi. O'quvchilarga
       tarqatishdan oldin buni o'chirish kerak.</span></div></div>` : ''}
-    <div class="bver">Qurilgan: <b>2026-08-21 11:51</b></div>`,
+    <div class="bver">Qurilgan: <b>2026-08-21 13:37</b></div>`,
     `<button class="btn o" onclick="close_()">Yopish</button>`);
 }
 /* Grafni bir bosishda ochish — rejim va ko'rinish qanday bo'lishidan qat'i nazar.
