@@ -1695,6 +1695,76 @@ button.lg:hover{border-color:var(--rule);color:var(--ink);background:var(--sunk)
 .blev .msec em { margin-left: auto; font-style: normal; font-variant-numeric: tabular-nums;
   letter-spacing: 0; color: var(--ink); }
 
+/* ==================== MASHQ ALMASHTIRGICH ====================
+   Uchala mashq bir varaqda taxlanib ketmasin — bir vaqtda bittasi. */
+.bmtabs { display: flex; gap: 6px; padding: 9px 12px; overflow-x: auto;
+  scrollbar-width: none; border-bottom: 1px solid var(--rule);
+  background: linear-gradient(180deg,
+    color-mix(in oklab, var(--c) 7%, transparent), transparent); }
+.bmtabs::-webkit-scrollbar { display: none; }
+.bmtab { flex: 0 0 auto; display: flex; align-items: center; gap: 7px;
+  padding: 7px 12px 7px 8px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--rule); background: var(--surface); color: var(--ink-2);
+  font: inherit; font-size: .78rem; transition: .16s; }
+.bmtab b { width: 19px; height: 19px; border-radius: 50%; display: grid;
+  place-items: center; font-size: .68rem; background: var(--rule); color: var(--ink);
+  transition: .16s; }
+.bmtab:hover { color: var(--ink); border-color: color-mix(in oklab, var(--c) 40%, var(--rule)); }
+.bmtab.on { color: var(--ink); border-color: var(--c);
+  background: color-mix(in oklab, var(--c) 14%, var(--surface));
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--c) 35%, transparent),
+              0 0 22px -8px var(--c); }
+.bmtab.on b { background: var(--c); color: var(--accent-ink); }
+.bmtab.ok b { background: var(--ok); color: #04140b; }
+.bmtab.ok.on b { background: var(--ok); }
+
+.bmnext { width: 100%; margin-top: 4px; }
+
+/* ==================== NEON ====================
+   O'yinning mavjud tili: yumshoq halqa + tashqi yorug'lik.
+   Faqat DIQQAT TALAB QILADIGAN joyda — bezak uchun emas. */
+.blev .bhead { position: relative; }
+.blev .bhead::after { content: ""; position: absolute; left: 14px; right: 14px; bottom: 0;
+  height: 1px; background: linear-gradient(90deg,
+    transparent, color-mix(in oklab, var(--c) 65%, transparent), transparent); }
+.blev .nnum { box-shadow: 0 0 0 1px color-mix(in oklab, var(--c) 30%, transparent),
+  0 0 26px -10px var(--c); }
+.brail .bs.on { box-shadow: 0 0 20px -9px var(--c); }
+.bmn { box-shadow: 0 0 18px -8px var(--c); }
+
+/* relsda siljish borligi ko'rinib tursin */
+.brail, .bmtabs { position: relative;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 14px,
+    #000 calc(100% - 14px), transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 14px,
+    #000 calc(100% - 14px), transparent 100%); }
+
+/* ==================== TOR EKRAN ==================== */
+@media (max-width: 560px) {
+  .bpane { padding: 10px 11px 16px; }
+  .blev .bhead { padding: 12px 11px 10px; gap: 9px; }
+  .blev .bhead h2 { font-size: 1rem; }
+  .brail { padding: 7px 8px; gap: 3px; }
+  .brail .bs { padding: 5px 8px; font-size: .72rem; }
+  .brail .bs span { display: none; }        /* faqat raqam qoladi — sig'adi */
+  .brail .bs.on span { display: inline; }   /* joriy qadam nomi ko'rinadi */
+  .bmtabs { padding: 8px 10px; }
+  .bmtab span { max-width: 108px; overflow: hidden; text-overflow: ellipsis;
+    white-space: nowrap; }
+  .bmq { margin-bottom: 12px; }
+}
+
+/* ==== SINOV REJIMI BELGISI ====
+   Menyu pastida. Tasodifan o'quvchilarga tarqatib yubormaslik uchun. */
+.tflag { display: flex; gap: 9px; align-items: flex-start; margin: 14px 0 4px;
+  padding: 11px 13px; border-radius: 9px;
+  border: 1px solid color-mix(in oklab, var(--danger) 45%, transparent);
+  background: color-mix(in oklab, var(--danger) 9%, transparent);
+  box-shadow: 0 0 24px -12px var(--danger); }
+.tflag > svg { flex: none; width: 15px; height: 15px; margin-top: 1px; color: var(--danger); }
+.tflag .tfx b { display: block; font-size: .86rem; color: var(--ink); margin-bottom: 2px; }
+.tflag .tfx span { font-size: .78rem; line-height: 1.45; color: var(--ink-2); }
+
 /* ==== INTERAKTIV JADVAL ==== */
 /* to'ldiriladigan mashqda material qutisi qisqartirilmaydi —
    aks holda jadval kichkina oynachaga tiqiladi */
@@ -2834,27 +2904,44 @@ function bDos() {
 /* ======================== 2 · VAZIFA ======================== */
 function bTask() {
   const d = BD.t[BL.id], b = bSt(BL.id);
-  /* jadvallarni oldindan interaktiv qilib olamiz — sarlavha shunga qarab o'zgaradi */
-  const IH = d.m.map((m, i) => itApply(BL.id, i + 1, m.h));
-  const hasT = IH.map(h => h.indexOf('class="itb') >= 0);
+  const n = d.m.length;
+  if (BL.mq == null || BL.mq >= n) BL.mq = 0;
+  const i = BL.mq;
+  const m = d.m[i];
+
+  const html = itApply(BL.id, i + 1, m.h);
+  const hasT = html.indexOf('class="itb') >= 0;
+
+  /* mashqlar orasida almashtirgich — har birida to'ldirilganlik belgisi */
+  const tabs = d.m.map((x, j) => {
+    const full = bChars(BL.id, j) >= BMIN;
+    return `<button class="bmtab${j === i ? ' on' : ''}${full ? ' ok' : ''}"
+      onclick="bMq(${j})"><b>${j + 1}</b><span>${esc(bShort(x.t))}</span></button>`;
+  }).join('');
+
   open_(ico('book') + ' Vazifa', `
     <div class="neo blev">
       ${bHead('Dosyega qarab bajaring — javob kaliti hali yopiq')}
       ${bRail()}
+      <div class="bmtabs">${tabs}</div>
       <div class="bpane">
-        ${hasT.some(Boolean) ? '<div class="itprog" id="itprog"></div>' : ''}
-        ${d.m.map((m, i) => `
-          <div class="bmq">
-            <div class="bmh"><span class="bmn">${i + 1}</span><h3>${inlB(m.t)}</h3></div>
-            <div class="note bmt${hasT[i] ? ' free' : ''}">${IH[i]}</div>
-            <label class="bwl">${hasT[i] ? 'Xulosangiz' : 'Javobingiz'}
-              <span class="bcnt" id="bc${i}">${bChars(BL.id, i)}/${BMIN} belgi</span></label>
-            <textarea class="bta" id="bta${i}" oninput="bTyped(${i})"
-              placeholder="${hasT[i]
-                ? 'Jadvaldan chiqqan xulosangizni yozing…'
-                : "Xulosangizni shu yerga yozing…"}"
-            >${escA(b.a['m' + i] || '')}</textarea>
-          </div>`).join('')}
+        ${hasT ? '<div class="itprog" id="itprog"></div>' : ''}
+        <div class="bmq">
+          <div class="bmh"><span class="bmn">${i + 1}</span><h3>${inlB(m.t)}</h3></div>
+          <div class="note bmt${hasT ? ' free' : ''}">${html}</div>
+          <label class="bwl">${hasT ? 'Xulosangiz' : 'Javobingiz'}
+            <span class="bcnt" id="bc${i}">${bChars(BL.id, i)}/${BMIN} belgi</span></label>
+          <textarea class="bta" id="bta${i}" oninput="bTyped(${i})"
+            placeholder="${hasT
+              ? 'Jadvaldan chiqqan xulosangizni yozing…'
+              : "Xulosangizni shu yerga yozing…"}"
+          >${escA(b.a['m' + i] || '')}</textarea>
+        </div>
+
+        ${i < n - 1
+          ? `<button class="btn o bmnext" onclick="bMq(${i + 1})">
+              ${ico('right')} Keyingi mashq — ${esc(bShort(d.m[i + 1].t))}</button>`
+          : ''}
 
         ${bHasDos(BL.id) ? `<div class="bdos-mini">${ico('radar')}
           <button class="lnk" onclick="bStep(1)">Dosyeni qayta ochish</button></div>` : ''}
@@ -2863,7 +2950,21 @@ function bTask() {
     `<button class="btn" onclick="bStep(${bHasDos(BL.id) ? 1 : 0})">${ico('left')} ${bHasDos(BL.id) ? 'Dosye' : 'Kirish'}</button>
      <button class="btn neon" id="bnext" ${bFilled(BL.id) ? '' : 'disabled'}
        onclick="bStep(3)">${ico('right')} O'zingizni baholang</button>`);
-  itProg();   /* jarayon chizig'ini to'ldirish */
+  itProg();
+}
+
+/* mashqni almashtirish */
+function bMq(j) {
+  BL.mq = j;
+  bTask();
+  const p = document.querySelector('.mb');
+  if (p) p.scrollTop = 0;
+}
+
+/* uzun sarlavhani yorliqqa siqish */
+function bShort(t) {
+  const s = String(t).replace(/\*/g, '').replace(/\s*\([^)]*\)\s*/g, ' ').trim();
+  return s.length > 22 ? s.slice(0, 21) + '…' : s;
 }
 
 function bTyped(i) {
@@ -3532,7 +3633,7 @@ function itCheck(p, t) {
 
     const row = document.getElementById('itr-' + p + '-' + t + '-' + q.r);
     if (!row) return;
-    const cell = row.children[q.c];
+    const cell = row.children && row.children[q.c];
     if (cell) {
       cell.classList.remove('itok', 'itbad');
       cell.classList.add(good ? 'itok' : 'itbad');
@@ -4955,7 +5056,11 @@ function menu() {
     ${S.tro.length ? `<div class="msec">Trofeylar</div>
       <div class="trow">${S.tro.map(k => troChip(k)).join('')}</div>` : ''}
 
-    <div class="bver">Qurilgan: <b>2026-08-19 22:09</b></div>`,
+    ${OPENALL ? `<div class="tflag">${ico('warn')}
+      <div class="tfx"><b>Sinov rejimi yoqiq</b>
+      <span>Barcha hudud ochiq, test talab qilinmaydi. O'quvchilarga
+      tarqatishdan oldin buni o'chirish kerak.</span></div></div>` : ''}
+    <div class="bver">Qurilgan: <b>2026-08-21 08:31</b></div>`,
     `<button class="btn o" onclick="close_()">Yopish</button>`);
 }
 function exportSave() { dl('77hudud-' + today() + '.json', JSON.stringify(S)); }
